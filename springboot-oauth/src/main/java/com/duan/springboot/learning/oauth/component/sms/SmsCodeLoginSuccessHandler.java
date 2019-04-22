@@ -1,8 +1,6 @@
 
 package com.duan.springboot.learning.oauth.component.sms;
 
-import com.carding.bow.common.constant.CommonConstant;
-import com.carding.bow.common.util.AuthUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +53,8 @@ public class SmsCodeLoginSuccessHandler implements AuthenticationSuccessHandler 
         }
 
         try {
-            String[] tokens = AuthUtils.extractAndDecodeHeader(header);
+            String[] tokens = new String[]{};
+//            String[] tokens = AuthUtils.extractAndDecodeHeader(header);
             assert tokens.length == 2;
             String clientId = tokens[0];
 
@@ -75,8 +74,8 @@ public class SmsCodeLoginSuccessHandler implements AuthenticationSuccessHandler 
             OAuth2AccessToken oAuth2AccessToken = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
             log.info("获取token 成功：{}", oAuth2AccessToken.getValue());
 
-            response.setCharacterEncoding(CommonConstant.UTF8);
-            response.setContentType(CommonConstant.CONTENT_TYPE);
+//            response.setCharacterEncoding(CommonConstant.UTF8);
+//            response.setContentType(CommonConstant.CONTENT_TYPE);
             PrintWriter printWriter = response.getWriter();
             printWriter.append(objectMapper.writeValueAsString(oAuth2AccessToken));
         } catch (IOException e) {

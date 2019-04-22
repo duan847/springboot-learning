@@ -87,7 +87,7 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
                 .withClient("clientid")
                 .secret(passwordEncoder().encode("secret"))
                 //设置验证方式
-                .authorizedGrantTypes("password", "refresh_token")
+                .authorizedGrantTypes("password", "refresh_token", "mobile")
                 .scopes("read", "write")
                 ////token过期时间
                 .accessTokenValiditySeconds(10000)

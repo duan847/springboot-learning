@@ -2,6 +2,7 @@
 
 package com.duan.springboot.learning.oauth.component.sms;
 
+import com.duan.springboot.learning.oauth.userdetail.impl.UserDetailsImpl;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -23,7 +24,7 @@ public class SmsCodeAuthenticationProvider implements AuthenticationProvider {
 //        }
 //
 //        UserDetailsImpl userDetails = buildUserDeatils(userVo);
-
+        UserDetailsImpl userDetails = new UserDetailsImpl();
         SmsCodeAuthenticationToken authenticationToken = new SmsCodeAuthenticationToken(userDetails, userDetails.getAuthorities());
         authenticationToken.setDetails(smsCodeAuthenticationToken.getDetails());
         return authenticationToken;
