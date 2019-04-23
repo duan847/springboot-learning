@@ -20,6 +20,7 @@
         <module>springboot-lombok</module>
         <module>springboot-logback</module>
         <module>springboot-thymeleaf</module>
+        <module>springboot-hutool</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
