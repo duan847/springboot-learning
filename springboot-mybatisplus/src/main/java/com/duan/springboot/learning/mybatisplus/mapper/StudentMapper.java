@@ -1,7 +1,7 @@
-package com.duan.springboot.learning.cache.mapper;
+package com.duan.springboot.learning.mybatisplus.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.duan.springboot.learning.cache.pojo.entity.Student;
+import com.duan.springboot.learning.mybatisplus.pojo.entity.Student;
 
 /**
  *

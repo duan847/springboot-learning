@@ -1,7 +1,7 @@
-package com.duan.springboot.learning.cache.service;
+package com.duan.springboot.learning.mybatisplus.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.duan.springboot.learning.cache.pojo.entity.Student;
+import com.duan.springboot.learning.mybatisplus.pojo.entity.Student;
 
 /**
  *

@@ -1,4 +1,4 @@
-package com.duan.springboot.learning.cache.pojo.entity;
+package com.duan.springboot.learning.mybatisplus.pojo.entity;
 
 import lombok.Data;
 

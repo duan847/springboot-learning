@@ -1,4 +1,4 @@
-package com.duan.springboot.learning.cache.pojo.vo;
+package com.duan.springboot.learning.mybatisplus.pojo.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

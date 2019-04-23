@@ -1,4 +1,4 @@
-package com.duan.springboot.learning.cache.config;
+package com.duan.springboot.learning.mybatisplus.config;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @author duanjw
  */
 @Configuration
-@MapperScan("com.duan.springboot.learning.cache.mapper")
+@MapperScan("com.duan.springboot.learning.mybatisplus.mapper")
 public class MybatisPlusConfig {
     /**
      * 1.分页插件

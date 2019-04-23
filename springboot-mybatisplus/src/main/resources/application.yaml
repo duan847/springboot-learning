@@ -1,4 +1,4 @@
-# DataSource Config
+# 数据源
 spring:
   datasource:
     driver-class-name: org.h2.Driver
@@ -9,8 +9,7 @@ spring:
     password: test
 
 
-# Logger Config
+# 日志输出，不配置不会输出sql日志
 logging:
   level:
     com.duan.springboot.learning.mybatisplus: debug
-# MyBatis-Plus 配置该演示无
