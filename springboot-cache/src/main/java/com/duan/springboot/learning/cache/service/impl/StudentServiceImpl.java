@@ -15,8 +15,6 @@ import java.util.List;
 /**
  *
  * 学生service实现
- * 1. 增、删、改、查询、查看
- * 2. restful风格的接口
  *
  * @author duanjw
  */
@@ -24,31 +22,22 @@ import java.util.List;
 @Service
 public class StudentServiceImpl implements StudentService {
 
-    /**
-     * 新增学生
-     * @param student 学生
-     * @return true、false
-     */
-    @Override
-    public boolean insert(Student student) {
-        log.info("新增学生：{}", student);
-        return true;
-    }
-
 
     /**
      * 查询所有学生
+     *
      * @return 学生list
      */
     @Override
     public List<Student> select() {
-        List<Student> studentList = Arrays.asList(new Student(1,"张三",new Date()), new Student(2,"李四",new Date()));
+        List<Student> studentList = Arrays.asList(new Student(1, "张三", new Date()), new Student(2, "李四", new Date()));
         return studentList;
     }
 
     /**
      * 根据id查看学生
      * 并放入缓存，默认的key是参数的值
+     *
      * @param id
      * @return Student
      */
@@ -56,24 +45,25 @@ public class StudentServiceImpl implements StudentService {
     @Cacheable(cacheNames = "student")
     public Student findById(Integer id) {
         log.info("开始缓存用户，用户id：{}，缓存的key为：student::{}", id, id);
-        if(1 == id) {
-            return new Student(1,"张三",new Date());
+        if (1 == id) {
+            return new Student(1, "张三", new Date());
         }
         return new Student();
     }
 
     /**
      * 根据id修改学生
-     *
+     * <p>
      * 由于返回的是成功和失败，所以选择把缓存删除，当调用查看再缓存
+     *
      * @param student
      * @return true、false
      */
     @Override
-    @CacheEvict(cacheNames = "student",key = "#student.id")
+    @CacheEvict(cacheNames = "student", key = "#student.id")
     public boolean updateById(Student student) {
         log.info("根据id修改学生：{}", student);
-        if(1 == student.getId()) {
+        if (1 == student.getId()) {
             return true;
         }
         return false;
@@ -81,14 +71,14 @@ public class StudentServiceImpl implements StudentService {
 
     /**
      * 根据id修改学生并且返回更新后的学生
-     *
+     * <p>
      * 直接更新缓存中的学生对象为传入的学生对象
      *
      * @param student 更新后的
      * @return student 更新后的
      */
     @Override
-    @CachePut(cacheNames = "student",key = "#student.id")
+    @CachePut(cacheNames = "student", key = "#student.id")
     public Student updateByIdAndReturn(Student student) {
         log.info("根据id修改学生：{}", student);
         return student;
@@ -96,6 +86,7 @@ public class StudentServiceImpl implements StudentService {
 
     /**
      * 根据id删除学生
+     *
      * @param id
      * @return true、false
      */
@@ -108,8 +99,9 @@ public class StudentServiceImpl implements StudentService {
 
     /**
      * 删除所有学生
-     *
+     * <p>
      * 删除所有学生的缓存
+     *
      * @return true、false
      */
     @Override

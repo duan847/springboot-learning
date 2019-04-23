@@ -16,7 +16,6 @@ import java.util.Date;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -75,7 +74,7 @@ public class StudentServiceImplTest {
         assertThat(studentService.updateByIdAndReturn(new Student(1, "李四", new Date())), notNullValue());
         Student student = studentService.findById(1);
         //学生姓名不为空，并且等于李四
-        assertThat(student.getName(), allOf(notNullValue(),is("李四")));
+        assertThat(student.getName(), allOf(notNullValue(), is("李四")));
         //输入日志
         log.info("根据id查看学生：{}", student);
     }
@@ -88,6 +87,7 @@ public class StudentServiceImplTest {
     public void test05deleteById() {
         //根据id删除学生返回结果是否为true
         assertThat(studentService.deleteById(1), is(true));
+        log.info("根据id删除学生成功。");
     }
 
     /**
@@ -97,6 +97,7 @@ public class StudentServiceImplTest {
     public void test6deleteAll() {
         //根据id删除学生返回结果是否为true
         assertThat(studentService.deleteAll(), is(true));
+        log.info("删除所有学生成功。");
     }
 
 }
