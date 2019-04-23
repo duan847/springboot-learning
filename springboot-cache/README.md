@@ -1,9 +1,9 @@
 ## 4.Spring Boot Cache缓存
 ## cache
 ### 简介
-将数据缓存到内存或Redis，增快查询效率。本文使用Redis作为缓存容器，可以适应单机和分布式系统。
+将数据缓存到内存或Redis，增快查询效率。本文使用redis作为缓存容器，可以适应单机和分布式系统。
 ### 引入
-在项目pom引入swagger-ui依赖
+在项目pom引入cache和redis依赖，引入redis依赖后，缓存的数据会放到redis中
 ```xml
     <dependencies>
         <!--springboot cache-->
