@@ -128,12 +128,12 @@ redis的值
 
 ### 问题
 
-1. 如果更新返回的不是更新的数据，而是是boolean怎么处理？
+1. 如果更新返回的不是更新的数据，而是是boolean怎么处理？  
 答：目前采用删除key，再次查询、查看时重新获取，再缓存。
-2. 如果批量更新、批量删除怎么处理？
+2. 如果批量更新、批量删除怎么处理？  
 答：目前采用删除所有key。
 
 如果大家有更好的办法，请赐教
 
 ### 源码
-springboot基于redis和cache的缓存：[Springboot-cache](github.com/duan847/springboot-learning/springboot-cache.git)
+springboot基于redis和cache的缓存：[Springboot-cache](https://github.com/duan847/springboot-learning/tree/master/springboot-cache)
