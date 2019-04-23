@@ -21,6 +21,8 @@
         <module>springboot-logback</module>
         <module>springboot-thymeleaf</module>
         <module>springboot-hutool</module>
+        <module>springboot-cache</module>
+        <module>starter</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
