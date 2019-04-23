@@ -17,13 +17,12 @@ import javax.servlet.http.HttpServletResponse;
  * 手机号登录验证filter
  */
 public class SmsCodeAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
-    public static final String SPRING_SECURITY_FORM_MOBILE_KEY = "sms";
     /**
      * 手机验证码地址
      */
     public static final String MOBILE_TOKEN_URL = "/mobile/token";
 
-    private String mobileParameter = SPRING_SECURITY_FORM_MOBILE_KEY;
+    private String mobileParameter = "mobile";
     private boolean postOnly = true;
 
     public SmsCodeAuthenticationFilter() {

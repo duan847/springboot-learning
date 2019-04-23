@@ -11,6 +11,10 @@
 
     <artifactId>springboot-oauth</artifactId>
 
+    <properties>
+        <hutool-version>4.5.6</hutool-version>
+    </properties>
+
     <dependencies>
         <!--springboot security-->
         <dependency>
@@ -45,8 +49,12 @@
             <version>1.0.10.RELEASE</version>
         </dependency>
 
-
-
+        <!--&lt;!&ndash;工具包&ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>cn.hutool</groupId>-->
+            <!--<artifactId>hutool-all</artifactId>-->
+            <!--<version>${hutool-version}</version>-->
+        <!--</dependency>-->
     </dependencies>
 
 </project>

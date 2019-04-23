@@ -3,6 +3,7 @@
 package com.duan.springboot.learning.oauth.component.sms;
 
 import com.duan.springboot.learning.oauth.userdetail.impl.UserDetailsImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -11,12 +12,14 @@ import org.springframework.security.core.AuthenticationException;
  * @date 2018/1/9
  * 手机号登录校验逻辑
  */
+@Slf4j
 public class SmsCodeAuthenticationProvider implements AuthenticationProvider {
 //    private UserService userService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         SmsCodeAuthenticationToken smsCodeAuthenticationToken = (SmsCodeAuthenticationToken) authentication;
+        log.info("登录人手机号：{}", smsCodeAuthenticationToken.getPrincipal());
 //        UserVO userVo = userService.findUserByMobile((String) smsCodeAuthenticationToken.getPrincipal());
 //
 //        if (userVo == null) {
@@ -25,6 +28,8 @@ public class SmsCodeAuthenticationProvider implements AuthenticationProvider {
 //
 //        UserDetailsImpl userDetails = buildUserDeatils(userVo);
         UserDetailsImpl userDetails = new UserDetailsImpl();
+        ;
+        log.info("用户信息：{}", userDetails.isEnabled());
         SmsCodeAuthenticationToken authenticationToken = new SmsCodeAuthenticationToken(userDetails, userDetails.getAuthorities());
         authenticationToken.setDetails(smsCodeAuthenticationToken.getDetails());
         return authenticationToken;

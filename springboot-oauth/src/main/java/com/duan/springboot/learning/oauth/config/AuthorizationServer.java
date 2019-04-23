@@ -1,18 +1,15 @@
 package com.duan.springboot.learning.oauth.config;
 
-import com.duan.springboot.learning.oauth.service.UserDetailsServiceImpl;
+import com.duan.springboot.learning.oauth.service.impl.UserDetailsServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
@@ -39,10 +36,8 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
      * 在spring5之后，必须配置加密算法
      * @return
      */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    @Autowired
+    public PasswordEncoder passwordEncoder;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -85,9 +80,9 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
         clients.inMemory()
                 //客户端ID
                 .withClient("clientid")
-                .secret(passwordEncoder().encode("secret"))
+                .secret(passwordEncoder.encode("secret"))
                 //设置验证方式
-                .authorizedGrantTypes("password", "refresh_token", "mobile")
+                .authorizedGrantTypes("password", "refresh_token", "authorization_code")
                 .scopes("read", "write")
                 ////token过期时间
                 .accessTokenValiditySeconds(10000)

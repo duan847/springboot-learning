@@ -17,7 +17,7 @@ public class AuthenticationController {
      */
     @GetMapping("/show")
     public String require() {
-        return null;
+        return "hi";
     }
 
 }

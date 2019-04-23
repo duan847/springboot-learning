@@ -32,7 +32,7 @@ public class OauthApplicationTest {
     @Test
     public void test01show() {
         //get
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:8080/show",  String.class);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:8080/show", String.class);
         //状态码是否为401
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
 
@@ -43,7 +43,7 @@ public class OauthApplicationTest {
      * 获取token
      */
     @Test
-    public void test02token(){
+    public void test02token() {
         //headers
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("Authorization", "Basic Y2xpZW50aWQ6c2VjcmV0");
@@ -79,10 +79,10 @@ public class OauthApplicationTest {
         requestHeaders = new HttpHeaders();
         requestHeaders.add("Authorization", "Bearer " + accessToken);
         //HttpEntity
-         requestEntity = new HttpEntity<>(requestHeaders);
+        requestEntity = new HttpEntity<>(requestHeaders);
 
         //get
-        responseEntity = restTemplate.exchange("http://localhost:8080/show",HttpMethod.GET, requestEntity,  String.class);
+        responseEntity = restTemplate.exchange("http://localhost:8080/show", HttpMethod.GET, requestEntity, String.class);
 
         //状态码是否为401
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
@@ -112,12 +112,12 @@ public class OauthApplicationTest {
         log.info("refresh_token：{}", refreshToken);
 
 //headers
-         requestHeaders = new HttpHeaders();
+        requestHeaders = new HttpHeaders();
         requestHeaders.add("Authorization", "Basic Y2xpZW50aWQ6c2VjcmV0");
         //HttpEntity
         requestEntity = new HttpEntity<>(requestHeaders);
         //post
-        responseEntity = restTemplate.postForEntity("http://localhost:8080/oauth/token?grant_type=refresh_token&refresh_token="+refreshToken+"&client_id=clientid&client_secret=secret", requestEntity, String.class);
+        responseEntity = restTemplate.postForEntity("http://localhost:8080/oauth/token?grant_type=refresh_token&refresh_token=" + refreshToken + "&client_id=clientid&client_secret=secret", requestEntity, String.class);
         System.out.println(responseEntity.getBody());
 
     }
