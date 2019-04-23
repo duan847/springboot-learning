@@ -1,4 +1,4 @@
-## 4.Spring Boot Cache缓存
+## 4. Spring Boot Cache缓存
 ## cache
 ### 简介
 将数据缓存到内存或Redis，增快查询效率。本文使用redis作为缓存容器，可以适应单机和分布式系统。
@@ -20,7 +20,7 @@
     </dependencies>
 ```
 ### 开启
-方式1. 在项目的Application.java类（springboot启动类）上添加注解`@EnableCaching`
+在项目的Application.java类（springboot启动类）上添加注解`@EnableCaching`
 
 ### 常用注解及注解的属性
 
