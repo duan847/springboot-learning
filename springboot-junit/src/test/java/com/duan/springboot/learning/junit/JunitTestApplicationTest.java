@@ -1,5 +1,6 @@
 package com.duan.springboot.learning.junit;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -11,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * 1. 超时测试
  * 2. 异常测试
  */
+@Slf4j
 @RunWith(SpringRunner.class)
 public class JunitTestApplicationTest {
 
@@ -20,7 +22,7 @@ public class JunitTestApplicationTest {
      */
     @Test(timeout = 1000)
     public void testTimeout() {
-        System.out.println("success");
+        log.info("success");
     }
 
     /**

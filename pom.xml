@@ -23,6 +23,8 @@
         <module>springboot-hutool</module>
         <module>springboot-cache</module>
         <module>starter</module>
+        <module>springboot-websocket</module>
+        <module>excel</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
