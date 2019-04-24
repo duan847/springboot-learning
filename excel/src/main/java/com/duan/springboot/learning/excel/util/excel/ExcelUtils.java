@@ -1,5 +1,6 @@
 package com.duan.springboot.learning.excel.util.excel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @author duanjw
  *
  */
+@Slf4j
 public class ExcelUtils {
 
 
@@ -113,7 +115,7 @@ public class ExcelUtils {
             distCell.setCellComment(srcCell.getCellComment());
         }
         // 不同数据类型处理
-        CellType srcCellType = srcCell.getCellTypeEnum();
+        CellType srcCellType = srcCell.getCellType();
         distCell.setCellType(srcCellType);
 
 
@@ -132,7 +134,6 @@ public class ExcelUtils {
                 distCell.setCellValue(srcCell.getBooleanCellValue());
             } else if (srcCellType == CellType.ERROR ) {
                 distCell.setCellErrorValue(srcCell.getErrorCellValue());
-
             } else if (srcCellType == CellType.FORMULA  ) {
                 distCell.setCellFormula(srcCell.getCellFormula());
             } else { // nothing29
@@ -143,55 +144,51 @@ public class ExcelUtils {
 
     /**
      * 写入excel数据
-     * @param model 采用的模板 位置在 src/下 模板第一个sheet页必须是模板sheet
+     * @param path 采用的模板 位置在 src/下 模板第一个sheet页必须是模板sheet
      * @param sheetDatas 模板数据
      */
 
-    public static void writeData(String model , OutputStream out, SheetData... sheetDatas ) {
-
-        Workbook wb = null;
-        try {
-
-            InputStream input = ExcelUtils.class.getResourceAsStream( model);
-
+    public static void writeData(String path , OutputStream out, SheetData... sheetDatas ) {
+        Workbook wb;
+        try(InputStream input = ExcelUtils.class.getResourceAsStream( path)) {
             if(input == null) {
-                throw new RuntimeException("excel excel file load error :/excel/" + model + " , check excel file is exists !");
+                throw new RuntimeException("Excel文件不存在：" + path);
             }
 
-            if(model.endsWith(".xlsx"))
+            //Excel2007的版本，扩展名是.xlsx
+            if(path.endsWith(".xlsx")) {
                 wb = new XSSFWorkbook(input);
-            else if(model.endsWith(".xls"))
+            }
+            //Excel2003以前（包括2003）的版本，扩展名是.xls
+            else if(path.endsWith(".xls")) {
                 wb = new HSSFWorkbook(input);
-            else
-                throw new RuntimeException("excel file format is not valid , this : " + model + " , eg:.xlsx or xls");
+            }
+            else {
+                throw new RuntimeException("非Excel文件：" + path);
+            }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            //e.printStackTrace();
-
-            throw new RuntimeException("excel excel file load error :/" + model);
+            throw new RuntimeException("Excel读取失败：" + path);
         }
 
         Sheet source =  wb.getSheetAt(0);
 
-        //就一个的话 直接用模板
+        //sheet数据
         int size = sheetDatas.length ;
         for(int i = 0 ; i < size  ; i++) {
-
             if(i == 0) {
                 wb.setSheetName(0, sheetDatas[0].getName());
-
             } else {
-                //如果数据大于shell数，复制第一个sheet
+                //如果sheet数据下标大于shell数，说明有sheet数据但没有sheet，复制第一个sheet
                 if(i >= wb.getNumberOfSheets() ) {
                     Sheet toSheet = wb.createSheet(sheetDatas[i].getName());
                     //复制sheet
                     copySheet(wb, source, toSheet, true);
-                } else {
+                }
+                //直接使用sheet
+                else {
                     wb.setSheetName(i, sheetDatas[i].getName());
                 }
             }
-
-
         }
 
         for(int i = 0 ; i < size  ; i++) {
@@ -205,8 +202,7 @@ public class ExcelUtils {
             wb.close();
             out.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("写入或关闭文件资源失败", e);
         }
 
 
@@ -214,32 +210,28 @@ public class ExcelUtils {
 
     /**
      * 向sheet页中写入数据
-     * @param values 数据Map
+     * @param sheetData shell数据
      * @param sheet sheet
      */
     public static void writeData(SheetData sheetData , Sheet sheet) {
-
         //从sheet中找到匹配符 #{}表示单个 , ${}表示集合,从该单元格开始向下追加
-
         for(Iterator<Row> rowIt = sheet.rowIterator(); rowIt.hasNext();) {
             Row row = rowIt.next();
             //取cell
             for(int j = row.getFirstCellNum() ; j < row.getLastCellNum() ; j++) {
-
                 Cell cell = row.getCell(j);
-
+                if(cell == null) {
+                    continue;
+                }
+                String cellValue = cell.getStringCellValue();
                 //判断cell的内容是否包含 $ 或者#
-                if(cell != null && cell.getCellTypeEnum() == CellType.STRING && cell.getStringCellValue() != null
-                        && (cell.getStringCellValue().contains("$") || cell.getStringCellValue().contains("#") )) {
+                if(cell.getCellType() == CellType.STRING && cellValue != null
+                        && (cellValue.contains("$") || cellValue.contains("#") )) {
                     //剥离# $
-                    String[] winds = CommonUtils.getWildcard(cell.getStringCellValue().trim());
-
+                    String[] winds = CommonUtils.getWildcard(cellValue.trim());
                     for(String wind : winds) {
-
                         writeData(sheetData, wind , cell , sheet);
                     }
-
-
                 }
 
             }
@@ -249,7 +241,7 @@ public class ExcelUtils {
 
     /**
      * 填充数据
-     * @param values
+     * @param sheetData
      * @param keyWind #{name}只替换当前 or ${names} 从当前行开始向下替换
      */
     static void writeData(SheetData sheetData , String keyWind , Cell cell , Sheet sheet) {
@@ -299,9 +291,9 @@ public class ExcelUtils {
                         c.setCellStyle(cell.getCellStyle());
 
                     }
-                    if(cell.getCellTypeEnum() != null) {
+                    if(cell.getCellType() != null) {
                         System.out.println(cell.getCellType());
-                        c.setCellType(cell.getCellTypeEnum());
+                        c.setCellType(cell.getCellType());
 
                     }
 

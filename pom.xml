@@ -22,7 +22,7 @@
         <module>springboot-thymeleaf</module>
         <module>springboot-hutool</module>
         <module>springboot-cache</module>
-        <module>starter</module>
+        <module>simple-spring-boot-starter</module>
         <module>springboot-websocket</module>
         <module>excel</module>
     </modules>

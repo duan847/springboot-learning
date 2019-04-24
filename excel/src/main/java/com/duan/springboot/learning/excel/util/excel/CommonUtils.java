@@ -13,7 +13,7 @@ public class CommonUtils {
      * 从实体中解析出字段数据
      * @param data 可能为pojo或者map 从field中解析
      * @param field 字段名称
-     * @return
+     * @return object
      */
 
     @SuppressWarnings("rawtypes")
@@ -35,8 +35,6 @@ public class CommonUtils {
             }
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            // e.printStackTrace();
             log.error("data invoke error , data:" + data + " , key:" + field);
             return null;
         }
@@ -77,7 +75,6 @@ public class CommonUtils {
     /**
      * 返回 #{} 或者 ${} 中包含的值
      * @param str
-     * @param type
      * @return eg:#{name} ${ages}
      */
     public static String[] getWildcard(String str ) {
