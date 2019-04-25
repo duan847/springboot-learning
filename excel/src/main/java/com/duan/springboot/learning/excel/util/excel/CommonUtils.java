@@ -66,10 +66,7 @@ public class CommonUtils {
             }catch(Exception e) {
                 return false;
             }
-
-
         }
-
     }
 
     /**

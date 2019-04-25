@@ -46,23 +46,22 @@ public class PersonController {
             teachList.add(new Teach(i,"北京第" + i + "大学", "计算机" + i + "系", "本科", new Date(), new Date()));
         }
 
-        //共一个sheet
-        ExcelSheetData[] sds = new ExcelSheetData[1];
-        //初始化第一个sheet
+        //共一个sheet（就一个sheet可以不写，多个需要用数组）
+//        ExcelSheetData[] sds = new ExcelSheetData[1];
+        //初始化第一个sheet（sheet重命名）
         ExcelSheetData sd = new ExcelSheetData("面试登记表");
-
-        //设置家庭成员
+        //设置家庭成员（没有重命名，在模板中使用：${Family.id}
         sd.addMapListData(familyList);
-        //设置教育情况
-        sd.addMapListData(teachList);
-        //设置人员基本资料
+        //设置教育情况（重命名在模板中使用：${teachList.id}）
+        sd.addMapListData("teachList",teachList);
+        //设置人员基本资料（没有重命名，在模板中使用：#{Person.id}）
         sd.addMapData(new Person(1,"无邪",1,"18630070626","554343346@qq.com","北京市昌平区西半壁店村",new Date()));
-        //设置技能
+        //设置技能（模板中使用：#{skill}）)
         sd.addMapData("skill","凌波微步");
 
-        sds[0] = sd;
+//        sds[0] = sd;
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();OutputStream os = response.getOutputStream()) {
-            ExcelUtil.writeData("/面试登记表.xlsx", bos, sds);
+            ExcelUtil.writeData("/面试登记表.xlsx", bos, sd);
             byte[] bytes = bos.toByteArray();
 
             response.reset();

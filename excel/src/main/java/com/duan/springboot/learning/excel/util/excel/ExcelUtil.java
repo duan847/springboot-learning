@@ -239,6 +239,11 @@ public class ExcelUtil {
         }
     }
 
+    /**
+     * 根据数据的类型，设置单元格的值
+     * @param c
+     * @param cellValue
+     */
     public static void setCellValue(Cell c, Object cellValue) {
         if(cellValue != null) {
             if((cellValue instanceof Number || CommonUtils.isNumber(cellValue))) {
@@ -249,8 +254,7 @@ public class ExcelUtil {
             }
             else if(cellValue instanceof Date) {
                 c.setCellValue((Date)cellValue);
-            }
-            else {
+            } else {
                 c.setCellValue(cellValue.toString());
             }
         } else {
@@ -270,11 +274,17 @@ public class ExcelUtil {
         String key = keyWind.substring(2 , keyWind.length() - 1);
 
         if(keyWind.startsWith("#")) {
-
-            //简单替换
-
             Object value = excelSheetData.getByMapData(key);
-            setCellValue(cell, value);
+            String cellValue = cell.getStringCellValue();
+            //如果值为空或除去占位符还有其他字符，替换占位符的值
+            if(null == value || keyWind.length() != cellValue.length()) {
+                cellValue = cellValue.replace(keyWind, value.toString());
+                cell.setCellValue(cellValue);
+            }
+            //否则根据对象的类型设置占位置的值
+            else{
+                setCellValue(cell, value);
+            }
         } else  if(keyWind.startsWith("$")) {
 
             //从list中每个实体开始解,行数从当前开始
@@ -282,17 +292,12 @@ public class ExcelUtil {
             int columnindex = cell.getColumnIndex();
 
             //todo
-            List<? extends Object> listdata = excelSheetData.getMapListData().get(key.split("\\.")[0]);
+            List<? extends Object> listData = excelSheetData.getMapListData().get(key.split("\\.")[0]);
 
             //不为空的时候开始填充
-            if(listdata != null && !listdata.isEmpty()){
-                for(Object o : listdata) {
-                    for (int i = 0, size = listdata.size(); i < size; i++) {
-
-                    }
-                    Object cellValue = CommonUtils.getValue(o, key.split("\\.")[1]);
-
-
+            if(listData != null && !listData.isEmpty()){
+                for(Object object : listData) {
+                    Object cellValue = CommonUtils.getValue(object, key.split("\\.")[1]);
 
                     Row row = sheet.getRow(rowindex);
                     if(row == null) {
@@ -304,25 +309,13 @@ public class ExcelUtil {
                     if(c == null) {
                         c = row.createCell(columnindex);
                     }
-//                    //如果当前列是{+++}，并且当前数据下标小于数据的长度-1，创建新的列
-//                    if(c.getStringCellValue().equals("{+++}")) {
-//                        int lastRowNo = sheet.getLastRowNum();
-//                        sheet.shiftRows(rowindex, lastRowNo, 1);
-//                        row = sheet.createRow(rowindex);
-//                        c = row.createCell(columnindex);
-//                    }
                     if(cell.getCellStyle() != null) {
                         c.setCellStyle(cell.getCellStyle());
-
                     }
-//                    if(cell.getCellType() != null) {
-//                        c.setCellType(cell.getCellType());
-//                    }
-
                     setCellValue(c,cellValue);
 
                     //错误消息，如果有，添加到批注
-                    Map errorMap = (Map)CommonUtils.getValue(o, "errorMap");
+                    Map errorMap = (Map)CommonUtils.getValue(object, "errorMap");
                     if(null !=errorMap && null != errorMap.get(key)){
                         Drawing draw1 = sheet.createDrawingPatriarch();
                         Comment ct1 = draw1.createCellComment(new XSSFClientAnchor(0, 0, 0,
@@ -335,7 +328,6 @@ public class ExcelUtil {
             } else {
                 //list数据为空则将$全部替换空字符串
                 String cellValue = "" ;
-
                 cell.setCellValue(cellValue);
             }
         }

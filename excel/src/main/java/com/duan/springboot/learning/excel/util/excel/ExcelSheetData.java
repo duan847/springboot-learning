@@ -1,12 +1,11 @@
 package com.duan.springboot.learning.excel.util.excel;
 
+import com.duan.springboot.learning.excel.pojo.vo.Person;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author duanjw
@@ -25,27 +24,16 @@ public class ExcelSheetData {
     /**
      * sheet页中存储 #{key} 的数据
      */
-    private Map<String, Object> mapData = new HashMap<String, Object>();
+    private Map<String, Object> mapData = new HashMap<>();
 
     /**
      * sheet页中存储 ${key} 的数据
      */
     private Map<String, List<Object>> mapListData = new HashMap<>();
 
-
-
     /**
-     * 如果不设置mapData的key，key默认为default
-     * @param object
-     * @return
-     */
-    public ExcelSheetData addMapData(Object object) {
-        String className = object.getClass().getSimpleName();
-        this.mapData.put(className, object);
-        return this;
-    }
-    /**
-     * 如果不设置mapData的key，key默认为default
+     * mapData添加数据
+     *
      * @param object
      * @return
      */
@@ -54,15 +42,52 @@ public class ExcelSheetData {
         return this;
     }
 
+    /**
+     * mapData添加数据
+     * 不设置mapData的key，key默认为传入类的名字
+     *
+     * @param object
+     * @return
+     */
+    public ExcelSheetData addMapData(Object object) {
+        String className = object.getClass().getSimpleName();
+        this.mapData.put(className, object);
+        return this;
+    }
 
     /**
-     * 如果不设置mapListData的key，key默认为list中第一个对象的名字
+     * mapListData添加数据
      * @param mapListData
      * @return
      */
-    public ExcelSheetData addMapListData(List mapListData) {
-        String className = mapListData.get(0).getClass().getSimpleName();
-        this.mapListData.put(className, mapListData);
+    public ExcelSheetData addMapListData(Map<String, List> mapListData) {
+        mapListData.forEach((k,v) -> {
+            this.mapListData.put(k,v);
+        });
+        return this;
+    }
+
+    /**
+     * mapListData添加数据
+     * 不设置mapListData的key，key默认为list中第一个对象的类的名字
+     * @param listData
+     * @return
+     */
+    public ExcelSheetData addMapListData(List listData) {
+        String className = listData.get(0).getClass().getSimpleName();
+        this.mapListData.put(className, listData);
+        return this;
+    }
+
+    /**
+     * mapListData添加数据
+     * key为传入的key
+     *
+     * @param listData
+     * @return
+     */
+    public ExcelSheetData addMapListData(String key, List listData) {
+        this.mapListData.put(key, listData);
         return this;
     }
 
@@ -72,6 +97,11 @@ public class ExcelSheetData {
 
     public ExcelSheetData(String sheetName, List mapListData) {
         addMapListData(mapListData);
+        this.sheetName = sheetName;
+    }
+
+    public ExcelSheetData(String sheetName,String key, List mapListData) {
+        addMapListData(key, mapListData);
         this.sheetName = sheetName;
     }
 
