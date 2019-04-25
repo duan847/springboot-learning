@@ -22,7 +22,7 @@ import java.util.Map;
  *
  */
 @Slf4j
-public class ExcelUtils {
+public class ExcelUtil {
 
 
     /**
@@ -116,7 +116,7 @@ public class ExcelUtils {
         }
         // 不同数据类型处理
         CellType srcCellType = srcCell.getCellType();
-        distCell.setCellType(srcCellType);
+//        distCell.setCellType(srcCellType);
 
 
         if (copyValueFlag) {
@@ -145,12 +145,12 @@ public class ExcelUtils {
     /**
      * 写入excel数据
      * @param path 采用的模板 位置在 src/下 模板第一个sheet页必须是模板sheet
-     * @param sheetDatas 模板数据
+     * @param excelSheetData 模板数据
      */
 
-    public static void writeData(String path , OutputStream out, SheetData... sheetDatas ) {
+    public static void writeData(String path , OutputStream out, ExcelSheetData... excelSheetData ) {
         Workbook wb;
-        try(InputStream input = ExcelUtils.class.getResourceAsStream( path)) {
+        try(InputStream input = ExcelUtil.class.getResourceAsStream( path)) {
             if(input == null) {
                 throw new RuntimeException("Excel文件不存在：" + path);
             }
@@ -173,27 +173,27 @@ public class ExcelUtils {
         Sheet source =  wb.getSheetAt(0);
 
         //sheet数据
-        int size = sheetDatas.length ;
+        int size = excelSheetData.length ;
         for(int i = 0 ; i < size  ; i++) {
             if(i == 0) {
-                wb.setSheetName(0, sheetDatas[0].getName());
+                wb.setSheetName(0, excelSheetData[0].getSheetName());
             } else {
                 //如果sheet数据下标大于shell数，说明有sheet数据但没有sheet，复制第一个sheet
                 if(i >= wb.getNumberOfSheets() ) {
-                    Sheet toSheet = wb.createSheet(sheetDatas[i].getName());
+                    Sheet toSheet = wb.createSheet(excelSheetData[i].getSheetName());
                     //复制sheet
                     copySheet(wb, source, toSheet, true);
                 }
                 //直接使用sheet
                 else {
-                    wb.setSheetName(i, sheetDatas[i].getName());
+                    wb.setSheetName(i, excelSheetData[i].getSheetName());
                 }
             }
         }
 
         for(int i = 0 ; i < size  ; i++) {
             //写数据
-            writeData(sheetDatas[i], wb.getSheetAt(i));
+            writeData(excelSheetData[i], wb.getSheetAt(i));
         }
 
         try {
@@ -210,27 +210,27 @@ public class ExcelUtils {
 
     /**
      * 向sheet页中写入数据
-     * @param sheetData shell数据
+     * @param excelSheetData shell数据
      * @param sheet sheet
      */
-    public static void writeData(SheetData sheetData , Sheet sheet) {
+    public static void writeData(ExcelSheetData excelSheetData , Sheet sheet) {
         //从sheet中找到匹配符 #{}表示单个 , ${}表示集合,从该单元格开始向下追加
         for(Iterator<Row> rowIt = sheet.rowIterator(); rowIt.hasNext();) {
             Row row = rowIt.next();
             //取cell
             for(int j = row.getFirstCellNum() ; j < row.getLastCellNum() ; j++) {
                 Cell cell = row.getCell(j);
-                if(cell == null) {
+                if(cell == null || cell.getCellType() != CellType.STRING) {
                     continue;
                 }
                 String cellValue = cell.getStringCellValue();
                 //判断cell的内容是否包含 $ 或者#
-                if(cell.getCellType() == CellType.STRING && cellValue != null
+                if(cellValue != null
                         && (cellValue.contains("$") || cellValue.contains("#") )) {
                     //剥离# $
                     String[] winds = CommonUtils.getWildcard(cellValue.trim());
                     for(String wind : winds) {
-                        writeData(sheetData, wind , cell , sheet);
+                        writeData(excelSheetData, wind , cell , sheet);
                     }
                 }
 
@@ -239,41 +239,58 @@ public class ExcelUtils {
         }
     }
 
+    public static void setCellValue(Cell c, Object cellValue) {
+        if(cellValue != null) {
+            if((cellValue instanceof Number || CommonUtils.isNumber(cellValue))) {
+                c.setCellValue(Double.valueOf(cellValue.toString()));
+            }
+            else if(cellValue instanceof Boolean) {
+                c.setCellValue((Boolean) cellValue);
+            }
+            else if(cellValue instanceof Date) {
+                c.setCellValue((Date)cellValue);
+            }
+            else {
+                c.setCellValue(cellValue.toString());
+            }
+        } else {
+            //数据为空 如果当前单元格已经有数据则重置为空
+            if(c.getStringCellValue() != null) {
+                c.setCellValue("");
+            }
+        }
+    }
+
     /**
      * 填充数据
-     * @param sheetData
+     * @param excelSheetData
      * @param keyWind #{name}只替换当前 or ${names} 从当前行开始向下替换
      */
-    static void writeData(SheetData sheetData , String keyWind , Cell cell , Sheet sheet) {
+    static void writeData(ExcelSheetData excelSheetData , String keyWind , Cell cell , Sheet sheet) {
         String key = keyWind.substring(2 , keyWind.length() - 1);
 
         if(keyWind.startsWith("#")) {
 
             //简单替换
 
-            Object value = sheetData.get(key);
-            //为空则替换为空字符串
-            if(value == null)
-                value = "" ;
-
-            String cellValue = cell.getStringCellValue();
-            cellValue = cellValue.replace(keyWind, value.toString());
-
-            cell.setCellValue(cellValue);
-
+            Object value = excelSheetData.getByMapData(key);
+            setCellValue(cell, value);
         } else  if(keyWind.startsWith("$")) {
 
             //从list中每个实体开始解,行数从当前开始
             int rowindex = cell.getRowIndex();
             int columnindex = cell.getColumnIndex();
 
-            List<? extends Object> listdata = sheetData.getDatas();
+            //todo
+            List<? extends Object> listdata = excelSheetData.getMapListData().get(key.split("\\.")[0]);
 
             //不为空的时候开始填充
             if(listdata != null && !listdata.isEmpty()){
                 for(Object o : listdata) {
-                    Object cellValue = CommonUtils.getValue(o, key);
+                    for (int i = 0, size = listdata.size(); i < size; i++) {
 
+                    }
+                    Object cellValue = CommonUtils.getValue(o, key.split("\\.")[1]);
 
 
 
@@ -282,39 +299,27 @@ public class ExcelUtils {
                         row = sheet.createRow(rowindex);
                     }
 
-
                     //取出cell
                     Cell c = row.getCell(columnindex);
-                    if(c == null)
+                    if(c == null) {
                         c = row.createCell(columnindex);
-                    if(cell.getCellStyle() != null){
+                    }
+//                    //如果当前列是{+++}，并且当前数据下标小于数据的长度-1，创建新的列
+//                    if(c.getStringCellValue().equals("{+++}")) {
+//                        int lastRowNo = sheet.getLastRowNum();
+//                        sheet.shiftRows(rowindex, lastRowNo, 1);
+//                        row = sheet.createRow(rowindex);
+//                        c = row.createCell(columnindex);
+//                    }
+                    if(cell.getCellStyle() != null) {
                         c.setCellStyle(cell.getCellStyle());
 
                     }
-                    if(cell.getCellType() != null) {
-                        System.out.println(cell.getCellType());
-                        c.setCellType(cell.getCellType());
+//                    if(cell.getCellType() != null) {
+//                        c.setCellType(cell.getCellType());
+//                    }
 
-                    }
-
-                    if(cellValue != null) {
-                        if((cellValue instanceof Number || CommonUtils.isNumber(cellValue)) && cellValue.toString().length() < 15 )
-                            c.setCellValue( Double.valueOf(cellValue.toString()));
-                        else if(cellValue instanceof Boolean)
-                            c.setCellValue((Boolean)cellValue);
-                        else if(cellValue instanceof Date){
-                            c.setCellValue((Date)cellValue);
-                        }
-                        else
-                            c.setCellValue(cellValue.toString());
-                    } else {
-
-                        //数据为空 如果当前单元格已经有数据则重置为空
-                        if(c.getStringCellValue() != null) {
-                            c.setCellValue("");
-                        }
-
-                    }
+                    setCellValue(c,cellValue);
 
                     //错误消息，如果有，添加到批注
                     Map errorMap = (Map)CommonUtils.getValue(o, "errorMap");
