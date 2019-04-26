@@ -5,30 +5,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
+/**
+ * 培训情况
+ *
+ * @author duanjw
+ */
 @Data
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Family {
-
+public class Train {
     private Integer id;
-    private String name;
     /**
-     * 关系
+     * 课程
      */
-    private Integer relation;
+    private String course;
     /**
-     * 年龄
+     * 培训机构
      */
-    private Integer age;
-
+    private String org;
     /**
-     * 工作单位
+     * 培训时间
      */
-    private String workUnit;
-    /**
-     * 联系电话
-     */
-    private String telephone;
-
+    private Date time;
 }

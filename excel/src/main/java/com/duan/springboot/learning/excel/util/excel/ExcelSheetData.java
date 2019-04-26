@@ -61,9 +61,7 @@ public class ExcelSheetData {
      * @return
      */
     public ExcelSheetData addMapListData(Map<String, List> mapListData) {
-        mapListData.forEach((k,v) -> {
-            this.mapListData.put(k,v);
-        });
+        mapListData.forEach((k,v) ->  this.mapListData.put(k,v));
         return this;
     }
 
@@ -73,9 +71,11 @@ public class ExcelSheetData {
      * @param listData
      * @return
      */
-    public ExcelSheetData addMapListData(List listData) {
-        String className = listData.get(0).getClass().getSimpleName();
-        this.mapListData.put(className, listData);
+    public ExcelSheetData addMapListData(List...listData) {
+        for (List list : listData) {
+            String className = list.get(0).getClass().getSimpleName();
+            this.mapListData.put(className, list);
+        }
         return this;
     }
 

@@ -104,20 +104,16 @@ public class ExcelUtil {
 
 
 
-        CellStyle newstyle=wb.createCellStyle();
-        //copyCellStyle(srcCell.getCellStyle(), newstyle);
-        //distCell.setEncoding(srcCell.);
-        newstyle.cloneStyleFrom(srcCell.getCellStyle());
+        CellStyle cellStyle=wb.createCellStyle();
+        cellStyle.cloneStyleFrom(srcCell.getCellStyle());
         //样式
-        distCell.setCellStyle(newstyle);
+        distCell.setCellStyle(cellStyle);
         //批注
         if (srcCell.getCellComment() != null) {
             distCell.setCellComment(srcCell.getCellComment());
         }
         // 不同数据类型处理
         CellType srcCellType = srcCell.getCellType();
-//        distCell.setCellType(srcCellType);
-
 
         if (copyValueFlag) {
             if (srcCellType == CellType.NUMERIC) {
@@ -128,15 +124,13 @@ public class ExcelUtil {
                 }
             } else if (srcCellType == CellType.STRING ) {
                 distCell.setCellValue(srcCell.getRichStringCellValue());
-            } else if (srcCellType == CellType.BLANK ) {
-                // nothing21
-            } else if (srcCellType == CellType.BOOLEAN  ) {
+            }else if (srcCellType == CellType.BOOLEAN  ) {
                 distCell.setCellValue(srcCell.getBooleanCellValue());
             } else if (srcCellType == CellType.ERROR ) {
                 distCell.setCellErrorValue(srcCell.getErrorCellValue());
             } else if (srcCellType == CellType.FORMULA  ) {
                 distCell.setCellFormula(srcCell.getCellFormula());
-            } else { // nothing29
+            } else {
             }
         }
     }
@@ -223,10 +217,15 @@ public class ExcelUtil {
                 if(cell == null || cell.getCellType() != CellType.STRING) {
                     continue;
                 }
+
                 String cellValue = cell.getStringCellValue();
+                //单元格值为空返回
+                if(null == cellValue) {
+                    continue;
+                }
+
                 //判断cell的内容是否包含 $ 或者#
-                if(cellValue != null
-                        && (cellValue.contains("$") || cellValue.contains("#") )) {
+                if(cellValue.contains("$") || cellValue.contains("#")) {
                     //剥离# $
                     String[] winds = CommonUtils.getWildcard(cellValue.trim());
                     for(String wind : winds) {
@@ -281,7 +280,7 @@ public class ExcelUtil {
                 cellValue = cellValue.replace(keyWind, value.toString());
                 cell.setCellValue(cellValue);
             }
-            //否则根据对象的类型设置占位置的值
+            //否则根据对象的类型和值设置占位置的值
             else{
                 setCellValue(cell, value);
             }
@@ -290,14 +289,13 @@ public class ExcelUtil {
             //从list中每个实体开始解,行数从当前开始
             int rowindex = cell.getRowIndex();
             int columnindex = cell.getColumnIndex();
-
-            //todo
-            List<? extends Object> listData = excelSheetData.getMapListData().get(key.split("\\.")[0]);
+            String[] kesy = key.split("\\.");
+            List<? extends Object> listData = excelSheetData.getMapListData().get(kesy[0]);
 
             //不为空的时候开始填充
             if(listData != null && !listData.isEmpty()){
                 for(Object object : listData) {
-                    Object cellValue = CommonUtils.getValue(object, key.split("\\.")[1]);
+                    Object cellValue = CommonUtils.getValue(object, kesy[1]);
 
                     Row row = sheet.getRow(rowindex);
                     if(row == null) {

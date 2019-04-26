@@ -25,4 +25,24 @@ public class Person {
     private String email;
     private String address;
     private Date birthday;
+    /**
+     * 优点
+     */
+    private String merit;
+
+    /**
+     * 缺点
+     */
+    private String shortcoming;
+
+    /**
+     * 英语水平
+     */
+    private String englishLevel;
+
+    /**
+     * 第二外语
+     */
+    private String foreignLanguages;
+
 }

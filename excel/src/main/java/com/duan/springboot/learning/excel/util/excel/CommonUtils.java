@@ -6,36 +6,34 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class CommonUtils {
     /**
-     * 从实体中解析出字段数据
-     * @param data 可能为pojo或者map 从field中解析
-     * @param field 字段名称
+     * 从对象中取出属性的值
+     * @param object pojo或者map
+     * @param field 属性名称
      * @return object
      */
 
-    @SuppressWarnings("rawtypes")
-    public static Object getValue(Object data , String field) {
-
-        if(data instanceof Map) {
-
-            Map map = (Map) data;
+    public static Object getValue(Object object , String field) {
+        if(object instanceof Map) {
+            Map map = (Map) object;
             return map.get(field);
         }
         try {
-
             String method = "get" + field.substring(0 , 1).toUpperCase() + field.substring(1);
-
-            Method m = data.getClass().getMethod(method, null);
-
+            Method m = object.getClass().getMethod(method);
             if(m != null) {
-                return m.invoke(data, null);
+                return m.invoke(object);
             }
 
-        } catch (Exception e) {
-            log.error("data invoke error , data:" + data + " , key:" + field);
+        } catch (NoSuchMethodException e) {
+            log.info("对象：{}没有：{}属性的get方法", object, field);
+        }
+        catch (Exception e) {
+            log.error("获取对象：{}的属性：{}异常", object, field);
             return null;
         }
 
