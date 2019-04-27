@@ -25,6 +25,7 @@
         <module>simple-spring-boot-starter</module>
         <module>springboot-websocket</module>
         <module>excel</module>
+        <module>amqp</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

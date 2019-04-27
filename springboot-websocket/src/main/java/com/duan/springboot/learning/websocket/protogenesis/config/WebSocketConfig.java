@@ -1,4 +1,4 @@
-package com.duan.springboot.learning.websocket.config;
+package com.duan.springboot.learning.websocket.protogenesis.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
