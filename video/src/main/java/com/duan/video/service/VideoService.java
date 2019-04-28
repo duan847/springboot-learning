@@ -21,5 +21,5 @@ public interface VideoService extends IService<Video> {
      * 开始爬取
      * @return
      */
-    String start();
+    String start(Integer startNo);
 }
