@@ -1,0 +1,35 @@
+spring:
+  # mysql数据源配置
+  datasource:
+    # mysql链接驱动，可不配置。默认从引入的pom中找
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+    # 批量更新sql需要设置&allowMultiQueries=true
+    url: jdbc:mysql://39.106.164.245:3306/video?characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    # 连接池，可不配置。2.x默认使用该连接池
+    type: com.zaxxer.hikari.HikariDataSource
+  jpa:
+    generate-ddl: true
+    show-sql: true
+# mybatis配置
+mybatis:
+  # mybatis xml路径
+  mapper-locations: classpath:mapper/*Mapper.xml
+  # 实体类包路径
+  type-aliases-package: com.duan.springboot.learning.datajpa.pojo.entity
+  configuration:
+    # 开启驼峰命名转换 如数据库属性tenant_id可以自动注入到实体tenantId
+    map-underscore-to-camel-case: true
+
+# pagehelper分页插件配置
+pagehelper:
+  # 方言使用mysql
+  helperDialect: mysql
+  # 开启自动分页，如果参数中有pageNum、pageSize则会分页
+  support-methods-arguments: true
+
+# 打印sql日志
+logging:
+  level:
+    com.duan.springboot.learning.mybatis.mapper: DEBUG

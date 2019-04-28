@@ -26,6 +26,8 @@
         <module>springboot-websocket</module>
         <module>excel</module>
         <module>amqp</module>
+        <module>datajpa</module>
+        <module>video</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
