@@ -17,6 +17,7 @@
         <mybatisplus.version>3.1.0</mybatisplus.version>
         <jsoup.version>1.11.3</jsoup.version>
         <fastjson.version>1.2.57</fastjson.version>
+        <hutool-version>4.5.6</hutool-version>
     </properties>
 
     <dependencies>
@@ -54,7 +55,12 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-
+        <!--工具包-->
+        <dependency>
+        <groupId>cn.hutool</groupId>
+        <artifactId>hutool-all</artifactId>
+        <version>${hutool-version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
         <dependency>
             <groupId>com.alibaba</groupId>
