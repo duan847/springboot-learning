@@ -2,11 +2,14 @@ package com.duan.video.service.impl;
 
 import cn.hutool.core.io.file.FileReader;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.duan.video.mapper.VideoMapper;
 import com.duan.video.pojo.entity.Video;
 import com.duan.video.pojo.entity.VideoRoute;
 import com.duan.video.pojo.vo.ResponseDataUtil;
+import com.duan.video.pojo.vo.VideoDetailVO;
 import com.duan.video.service.VideoRouteService;
 import com.duan.video.service.VideoService;
 import lombok.extern.slf4j.Slf4j;
@@ -144,6 +147,29 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         }
         return "从：" + startNo + "开始";
     }
+
+    @Override
+    public IPage<Video> selectByTextPage(Page page, String text) {
+        return  videoMapper.selectPage(page, new QueryWrapper<Video>().like("name", text));
+    }
+
+    /**
+     * 根据no更新视频
+     * @param no
+     * @return
+     */
+    public boolean updateByNo(Integer no) {
+        QueryWrapper<Video> noWrapper = new QueryWrapper<Video>().eq("no", no);
+        Video video = videoMapper.selectOne(noWrapper);
+        if(null != video ) {
+            videoMapper.delete(noWrapper);
+            videoRouteService.deleteByVideoId(video.getId());
+            start(new Integer[no]);
+            return true;
+        }
+        return false;
+    }
+
     private boolean getById(Integer id) {
         try {
             String startUrl = BASE_URL + "detail/" + id + ".html";
@@ -235,15 +261,5 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             log.error("异常：{},id：{}", e, id);
         }
         return true;
-    }
-
-    public static void main(String[] args) {
-        FileReader fileReader = new FileReader("error.log");
-        List<String> result = fileReader.readLines();
-        for (int i = 0; i < result.size(); i++) {
-            if((result.get(i)).split("id：").length > 1) {
-                System.out.print(result.get(i).split("id：")[1] + ",");
-            }
-        }
     }
 }

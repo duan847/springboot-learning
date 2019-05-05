@@ -18,6 +18,7 @@
         <jsoup.version>1.11.3</jsoup.version>
         <fastjson.version>1.2.57</fastjson.version>
         <hutool-version>4.5.6</hutool-version>
+        <swagger.version>2.9.2</swagger.version>
     </properties>
 
     <dependencies>
@@ -68,6 +69,17 @@
             <version>1.2.57</version>
         </dependency>
 
+        <!--swagger-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
 
     </dependencies>
 

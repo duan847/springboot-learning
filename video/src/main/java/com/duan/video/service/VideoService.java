@@ -1,7 +1,10 @@
 package com.duan.video.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.duan.video.pojo.entity.Video;
+import com.duan.video.pojo.vo.VideoDetailVO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -26,4 +29,13 @@ public interface VideoService extends IService<Video> {
 
     @Transactional
     String start(Integer[] startNo);
+
+    IPage<Video> selectByTextPage(Page page, String text);
+
+    /**
+     * 根据no更新视频
+     * @param no
+     * @return
+     */
+    boolean updateByNo(Integer no);
 }
