@@ -1,5 +1,7 @@
 package com.duan.video.service.impl;
 
+import cn.hutool.core.util.ReUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -53,6 +55,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     @Autowired
     private CrawErrorService crawErrorService;
+
+    @Autowired
+    private IncompletionService incompletionService;
 
     @Override
     public List<Video> searchByName(String name) {
@@ -143,6 +148,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         }
         return "从：" + startNo + "开始";
     }
+
     /**
      * 开始爬取
      *
@@ -159,11 +165,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     @Override
     public IPage<Video> selectByTextPage(Page page, String text) {
-        return  videoMapper.selectPage(page, new QueryWrapper<Video>().like("name", text));
+        return videoMapper.selectPage(page, new QueryWrapper<Video>().like("name", text));
     }
 
     /**
      * 根据no更新视频
+     *
      * @param no
      * @return
      */
@@ -171,7 +178,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     public boolean updateByNo(Integer no) {
         QueryWrapper<Video> noWrapper = new QueryWrapper<Video>().eq("no", no);
         Video video = videoMapper.selectOne(noWrapper);
-        if(null != video ) {
+        if (null != video) {
             videoMapper.delete(noWrapper);
             videoRouteService.deleteByVideoId(video.getId());
             start(new Integer[no]);
@@ -204,6 +211,8 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             log.info("cover：{}", cover);
             log.info("score：{}", score);
             log.info("remarks：{}", remarks);
+
+
             Video video = new Video();
             video.setNo(id).setCover(cover).setScore(new BigDecimal(score)).setRemarks(remarks).setName(name);
 
@@ -252,6 +261,36 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             //新增视频
             video.insert();
 
+            //新增待完结
+            //只要包含"更新"关键字，就添加到待完结
+            if (null != remarks) {
+                Integer haveCount = 0;
+                Integer sumCount = 0;
+                if (StrUtil.containsAny(remarks, "更新")) {
+                    List<String> resultFindAll = ReUtil.findAll("\\d{1,3}", remarks, 0, new ArrayList<String>());
+
+                    int size = resultFindAll.size();
+                    for (int i = 0; i < size; i++) {
+                        Integer count = Integer.parseInt(resultFindAll.get(i));
+                        if (size == 1) {
+                            haveCount = count;
+                        } else if (resultFindAll.size() == 2) {
+                            if (i == 0) {
+                                haveCount = count;
+                            } else {
+                                sumCount = count;
+                            }
+                            //如果总集数不为0，并且已更新集数大于总集数，两数交换
+                            if (sumCount != 0 && haveCount > sumCount) {
+                                haveCount = haveCount ^ sumCount;
+                                sumCount = haveCount ^ sumCount;
+                                haveCount = haveCount ^ sumCount;
+                            }
+                        }
+                    }
+                    incompletionService.save(new Incompletion().setUpdateTime(new Date()).setVideoId(video.getId()).setHaveCount(haveCount).setSumCount(sumCount));
+                }
+            }
 
             //新增主演&导演
             staringList.addAll(directorList);
@@ -295,5 +334,10 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             log.error("出现异常：", e);
             crawErrorService.save(new CrawError().setContent(e.toString()).setCreateTime(new Date()).setVideoNo(id));
         }
+    }
+
+    public static void main(String[] args) {
+        List<String> resultFindAll = ReUtil.findAll("\\d{1,3}", "更新之5集/40", 0, new ArrayList<String>());
+        resultFindAll.forEach(item -> System.out.println(item));
     }
 }
