@@ -28,17 +28,17 @@
 //
 //    @Test
 //    public void searchByName() {
-//        videoService.searchByName("复仇者");
+//        log.info("视频地址：{}",videoService.searchByName("下一任"));
 //    }
 //
 //    @Test
 //    public void selectVideoUrlById() {
-//        log.info("视频地址：{}",videoService.selectVideoUrlById("51717"));
+//        log.info("视频地址：{}",videoService.selectVideoUrlById("76551"));
 //    }
 //
 //    @Test
 //    public void start() {
-//        videoService.start(50723);
+//        videoService.start(1,10);
 //    }
 //
 //    @Test
@@ -55,7 +55,7 @@
 //    @Test
 //    public void start2(){
 //        //49564
-//        videoService.start(new Integer[]{51717});
+//        videoService.start(new Integer[]{76551});
 //    }
 //
 //    @Test
@@ -63,5 +63,12 @@
 //        IPage<Video> videoIPage = videoService.selectByTextPage(new Page(1, 10), "复仇者联盟");
 //        List<Video> videoList = videoIPage.getRecords();
 //        System.out.println(videoList.size());
+//    }
+//
+//    @Test
+//    public void getById() {
+//        for (int i = 0; i < 10; i++) {
+//            videoService.crawByNo(i);
+//        }
 //    }
 //}

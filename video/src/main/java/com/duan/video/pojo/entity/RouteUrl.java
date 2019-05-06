@@ -15,10 +15,12 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class VideoRoute extends Model<VideoRoute> {
+public class RouteUrl extends Model<RouteUrl> {
     private Long id;
-    private Integer line;
     private Long videoId;
+    private String name;
+    private Integer line;
+    private String url;
     @Override
     protected Serializable pkVal() {
         return id;

@@ -1,24 +1,22 @@
 package com.duan.video.service.impl;
 
-import cn.hutool.core.io.file.FileReader;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.duan.video.Query;
+import com.duan.video.common.Constants;
 import com.duan.video.mapper.VideoMapper;
-import com.duan.video.pojo.entity.Video;
-import com.duan.video.pojo.entity.VideoRoute;
+import com.duan.video.pojo.entity.*;
 import com.duan.video.pojo.vo.ResponseDataUtil;
-import com.duan.video.pojo.vo.VideoDetailVO;
-import com.duan.video.service.VideoRouteService;
-import com.duan.video.service.VideoService;
+import com.duan.video.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,13 +40,19 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Autowired
     private RestTemplate restTemplate;
 
-
     @Autowired
     private VideoMapper videoMapper;
 
     @Autowired
     private VideoRouteService videoRouteService;
+    @Autowired
+    private PersonService personService;
 
+    @Autowired
+    private RouteUrlService routeUrlService;
+
+    @Autowired
+    private CrawErrorService crawErrorService;
 
     @Override
     public List<Video> searchByName(String name) {
@@ -118,20 +123,23 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
      */
     @Override
     @Transactional
-    public String start(Integer startNo) {
-        Video videoNow;
+    public String start(Integer startNo, Integer endNo) {
         if (null == startNo) {
             startNo = 1;
         }
-        for (int j = startNo; j < 90000; j++) {
+        if (null == endNo) {
+            endNo = 10000;
+        }
+
+        for (int j = startNo; j < endNo; j++) {
             if (j % 100 == 0) {
-                videoNow = new Video().selectOne(new QueryWrapper<Video>().eq("no", j));
+                Video videoNow = new Video().selectOne(new QueryWrapper<Video>().eq("no", j));
                 if (null != videoNow) {
                     log.info("停止运行，当前no：{}", j);
                     break;
                 }
-                getById(j);
             }
+            crawByNo(j);
         }
         return "从：" + startNo + "开始";
     }
@@ -144,7 +152,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Transactional
     public String start(Integer[] startNo) {
         for (int j = 0; j < startNo.length; j++) {
-            getById(startNo[j]);
+            crawByNo(startNo[j]);
         }
         return "从：" + startNo + "开始";
     }
@@ -159,6 +167,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
      * @param no
      * @return
      */
+    @Override
     public boolean updateByNo(Integer no) {
         QueryWrapper<Video> noWrapper = new QueryWrapper<Video>().eq("no", no);
         Video video = videoMapper.selectOne(noWrapper);
@@ -171,16 +180,20 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         return false;
     }
 
-    private boolean getById(Integer id) {
+    @Override
+    @Async
+    public void crawByNo(Integer id) {
         try {
             String startUrl = BASE_URL + "detail/" + id + ".html";
-            Document document = Jsoup.connect(startUrl).get();
+            //获取请求连接
+            Document document = Jsoup.connect(startUrl).timeout(60 * 1000).get();
+            //请求头设置，特别是cookie设置
             log.info("开始爬取：{}", startUrl);
-//                log.info("1==============:{}",document);
             Elements detail = document.select("dl[class=fed-deta-info fed-margin fed-part-rows fed-part-over]");
             if (null == detail || detail.html().trim().equals("")) {
                 log.error("没有找到资源，id：{}", id);
-                return false;
+                crawErrorService.save(new CrawError().setContent("无资源").setCreateTime(new Date()).setVideoNo(id));
+                return;
             }
             String cover = detail.select("dt a").attr("data-original");
             String score = detail.select("dt span[class*=fed-list-score]").text();
@@ -193,6 +206,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             log.info("remarks：{}", remarks);
             Video video = new Video();
             video.setNo(id).setCover(cover).setScore(new BigDecimal(score)).setRemarks(remarks).setName(name);
+
+            List<Person> staringList = new ArrayList<>();
+            List<Person> directorList = new ArrayList<>();
             //电影介绍
             for (Element element : zhuyan) {
                 //为空返回
@@ -200,6 +216,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                     continue;
                 }
                 String spanText = element.select("span").text();
+                Elements aTag = element.select("a");
                 String aText = element.select("a").text();
                 if ("简介：".equals(spanText)) {
                     log.info("{}", element.text());
@@ -215,12 +232,18 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                     video.setYear(aText);
                 } else if ("地区：".equals(spanText)) {
                     video.setAreaName(aText);
+                    video.setArea(Constants.dictMap.get(Constants.AREA_PID_KEY + aText));
                 } else if ("分类：".equals(spanText)) {
                     video.setTypeName(aText);
+                    video.setType(Constants.dictMap.get(Constants.VIDEO_TYPE_PID_KEY + aText));
                 } else if ("主演：".equals(spanText)) {
-                    video.setStaringName(aText);
+                    aTag.forEach(item -> {
+                        staringList.add(new Person().setName(item.text()).setType(Constants.STARING));
+                    });
                 } else if ("导演：".equals(spanText)) {
-                    video.setDirectorName(aText);
+                    aTag.forEach(item -> {
+                        directorList.add(new Person().setName(item.text()).setType(Constants.DIRECTOR));
+                    });
                 } else {
                     log.info("{}{}", spanText, aText);
                 }
@@ -228,39 +251,49 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
             //新增视频
             video.insert();
+
+
+            //新增主演&导演
+            staringList.addAll(directorList);
+            staringList.forEach(item -> item.setVideoId(video.getId()));
+            personService.saveBatch(staringList);
+
             Element boxs = document.select("div[class*=fed-drop-tops]").get(0);
             Elements xianlu = boxs.select("ul[class=fed-part-rows] li");
             Elements dizhi = document.select("div[class=fed-drop-boxs fed-drop-btms fed-matp-v] div");
 
-            List<VideoRoute> videoRouteList = new ArrayList<>();
+            List<RouteUrl> routeUrlList = new ArrayList<>();
             for (int i = 0; i < xianlu.size(); i++) {
 
 
                 String href = xianlu.get(i).select("a").attr("href");
-                String lineId = href.substring(href.indexOf("-") + 1, href.lastIndexOf("-"));
+                Integer lineId = Integer.parseInt(href.substring(href.indexOf("-") + 1, href.lastIndexOf("-")));
                 log.info("线路名：{}，地址：{}，id：{}", xianlu.get(i).select("a").text(), href, lineId);
+
+                // 新增视频线路
+                VideoRoute videoRoute = new VideoRoute().setLine(lineId).setVideoId(video.getId());
+                videoRouteService.save(videoRoute);
 
                 for (Element element : dizhi.get(i).select("ul[class=fed-part-rows] li")) {
                     log.info("名称：{}，地址：{}", element.select("a").html(), element.select("a").attr("href"));
 
                     Document videoDocument = Jsoup.connect(BASE_URL + element.select("a").attr("href")).get();
-//                        log.info("2==============:{}",videoDocument);
                     Elements url = videoDocument.select("iframe[data-play]");
                     log.info("视频播放地址：{}", url.attr("data-play"));
 
 
-                    //视频地址
-                    VideoRoute videoRoute = new VideoRoute();
-                    videoRoute.setLine(lineId).setName(element.select("a").html()).setUrl(url.attr("data-play")).setVideoId(video.getId());
-                    videoRouteList.add(videoRoute);
+                    //新增视频不同线路的url
+                    RouteUrl routeUrl = new RouteUrl();
+                    routeUrl.setLine(lineId).setName(element.select("a").html()).setUrl(url.attr("data-play")).setVideoId(video.getId());
+                    routeUrlList.add(routeUrl);
                 }
             }
-            videoRouteService.saveBatch(videoRouteList);
-        } catch (IOException e) {
-            log.error("异常：{},id：{}", e, id);
+            routeUrlService.saveBatch(routeUrlList);
+
         } catch (Exception e) {
-            log.error("异常：{},id：{}", e, id);
+            log.error("异常视频编号：{}", id);
+            log.error("出现异常：", e);
+            crawErrorService.save(new CrawError().setContent(e.toString()).setCreateTime(new Date()).setVideoNo(id));
         }
-        return true;
     }
 }

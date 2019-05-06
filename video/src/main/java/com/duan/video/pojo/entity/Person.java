@@ -5,16 +5,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
+import java.io.Serializable;
 
+/**
+ *
+ * @author duanjw
+ */
 @Data
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class VideoLog {
+public class Person implements Serializable {
+
+    /**
+     * 分数id
+     */
     private Long id;
-    private Integer no;
-    private Long videoId;
+
+    /**
+     * 姓名
+     */
+    private String name;
     private Integer type;
-    private Date createTime;
+    private Long videoId;
 }

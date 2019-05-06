@@ -10,6 +10,7 @@ import com.duan.video.pojo.entity.VideoRoute;
 import com.duan.video.service.VideoRouteService;
 import com.duan.video.service.VideoService;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.util.Map;
 /**
  * @author duanjw
  */
+@Slf4j
 @RestController
 @RequestMapping("video")
 public class VideoController {
@@ -25,14 +27,21 @@ public class VideoController {
     private VideoService videoService;
     @Autowired
     private VideoRouteService videoRouteService;
-//    /**
-//     *
-//     * @return
-//     */
-//    @GetMapping("start/{no}")
-//    public String start(@PathVariable("no")Integer startNo){
-//        return videoService.start(startNo);
-//    }
+    /**
+     *
+     * @return
+     */
+    @GetMapping("begin/{beginNo}/end/{endNo}")
+    public String start(@PathVariable("beginNo")Integer beginNo,@PathVariable("endNo")Integer endNo){
+        if(endNo == null) {
+            endNo = beginNo + 1;
+        }
+        for (int i = beginNo; i < endNo; i++) {
+            videoService.crawByNo(i);
+        }
+        log.info("爬区视频，从：{}到：{}任务分发完毕", beginNo, endNo);
+        return "爬区视频，从："+beginNo+"到：" + endNo;
+    }
 
     /**
      * 根据文本分页查询视频

@@ -26,10 +26,12 @@ public interface VideoService extends IService<Video> {
      * 开始爬取
      * @return
      */
-    String start(Integer startNo);
+    String start(Integer startNo, Integer endNo);
 
     @Transactional
     String start(Integer[] startNo);
+
+    void crawByNo(Integer id);
 
     IPage<Video> selectByTextPage(Page page, String text);
 

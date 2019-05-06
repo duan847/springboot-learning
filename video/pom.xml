@@ -80,7 +80,13 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${swagger.version}</version>
         </dependency>
-
+<!--
+        &lt;!&ndash;SeimiCrawler&ndash;&gt;
+        <dependency>
+            <groupId>cn.wanghaomiao</groupId>
+            <artifactId>SeimiCrawler</artifactId>
+            <version>2.1.1</version>
+        </dependency>-->
     </dependencies>
 
 </project>

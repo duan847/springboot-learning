@@ -39,7 +39,7 @@ public class VideoRouteServiceImpl extends ServiceImpl<VideoRouteMapper, VideoRo
 
     @Override
     public IPage<VideoRoute> selectByVideoIdPage(Page page, Long videoId) {
-        return videoRouteMapper.selectPage(page, new QueryWrapper<VideoRoute>().lambda().eq(VideoRoute::getVideoId, videoId).orderByAsc(VideoRoute::getLine));
+        return videoRouteMapper.selectPage(page, new QueryWrapper<VideoRoute>().lambda().eq(VideoRoute::getVideoId, videoId));
     }
 
     @Override

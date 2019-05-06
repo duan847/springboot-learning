@@ -57,6 +57,10 @@ public class Video extends Model<Video> {
     /**
      * 类型
      */
+    private Integer type;
+    /**
+     * 类型
+     */
     private String typeName;
     /**
      * 别名
