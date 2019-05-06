@@ -3,6 +3,7 @@ package com.duan.video.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.duan.video.Query;
 import com.duan.video.pojo.entity.Video;
 import com.duan.video.pojo.vo.VideoDetailVO;
 import org.springframework.transaction.annotation.Transactional;

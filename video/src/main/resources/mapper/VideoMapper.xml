@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.duan.video.mapper.VideoMapper">
+
+    <select id="selectPage" resultType="com.duan.video.pojo.vo.VideoDetailVO">
+        select id,name from video
+        <trim prefix="where" prefixOverrides="AND">
+            <if test="name != null and '' != name">
+                <bind name="name_like" value="'%' + name + '%'" />
+                AND name like #{name_like}
+            </if>
+        </trim>
+    </select>
+</mapper>

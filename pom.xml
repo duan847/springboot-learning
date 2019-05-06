@@ -28,6 +28,7 @@
         <module>amqp</module>
         <module>datajpa</module>
         <module>video</module>
+        <module>elasticsearch</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

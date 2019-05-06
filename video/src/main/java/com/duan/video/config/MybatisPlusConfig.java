@@ -19,7 +19,7 @@ public class MybatisPlusConfig {
      */
     @Bean
     public PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor().setDialectType("h2");
+        return new PaginationInterceptor().setDialectType("mysql");
     }
 //
 //    @Bean

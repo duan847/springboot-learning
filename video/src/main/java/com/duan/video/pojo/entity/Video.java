@@ -93,11 +93,6 @@ public class Video extends Model<Video> {
      */
     private String synopsis;
 
-
-    public void show(){
-        System.out.println(this);
-    }
-
     @Override
     protected Serializable pkVal() {
         return id;
