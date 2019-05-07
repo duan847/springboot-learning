@@ -198,7 +198,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             log.info("开始爬取：{}", startUrl);
             Elements detail = document.select("dl[class=fed-deta-info fed-margin fed-part-rows fed-part-over]");
             if (null == detail || detail.html().trim().equals("")) {
-                log.error("没有找到资源，id：{}", id);
+//                log.error("没有找到资源，id：{}", id);
                 crawErrorService.save(new CrawError().setContent("无资源").setCreateTime(new Date()).setVideoNo(id));
                 return;
             }
@@ -208,9 +208,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             String remarks = detail.select("dt span[class*=fed-list-remarks]").text();
             String name = detail.select("dd h1").text();
             Elements zhuyan = detail.select("dd ul li");
-            log.info("cover：{}", cover);
-            log.info("score：{}", score);
-            log.info("remarks：{}", remarks);
+//            log.info("cover：{}", cover);
+//            log.info("score：{}", score);
+//            log.info("remarks：{}", remarks);
 
 
             Video video = new Video();
@@ -228,12 +228,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                 Elements aTag = element.select("a");
                 String aText = element.select("a").text();
                 if ("简介：".equals(spanText)) {
-                    log.info("{}", element.text());
+//                    log.info("{}", element.text());
                     if (element.text().split("：").length > 1) {
                         video.setSynopsis(element.text().split("：")[1]);
                     }
                 } else if ("更新：".equals(spanText)) {
-                    log.info("{}", element.text());
+//                    log.info("{}", element.text());
                     if (element.text().split("：").length > 1) {
                         video.setUpdateTime(element.text().split("：")[1]);
                     }
@@ -254,7 +254,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                         directorList.add(new Person().setName(item.text()).setType(Constants.DIRECTOR));
                     });
                 } else {
-                    log.info("{}{}", spanText, aText);
+//                    log.info("{}{}", spanText, aText);
                 }
             }
 
@@ -307,18 +307,18 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
                 String href = xianlu.get(i).select("a").attr("href");
                 Integer lineId = Integer.parseInt(href.substring(href.indexOf("-") + 1, href.lastIndexOf("-")));
-                log.info("线路名：{}，地址：{}，id：{}", xianlu.get(i).select("a").text(), href, lineId);
+//                log.info("线路名：{}，地址：{}，id：{}", xianlu.get(i).select("a").text(), href, lineId);
 
                 // 新增视频线路
                 VideoRoute videoRoute = new VideoRoute().setLine(lineId).setVideoId(video.getId());
                 videoRouteService.save(videoRoute);
 
                 for (Element element : dizhi.get(i).select("ul[class=fed-part-rows] li")) {
-                    log.info("名称：{}，地址：{}", element.select("a").html(), element.select("a").attr("href"));
+//                    log.info("名称：{}，地址：{}", element.select("a").html(), element.select("a").attr("href"));
 
                     Document videoDocument = Jsoup.connect(BASE_URL + element.select("a").attr("href")).get();
                     Elements url = videoDocument.select("iframe[data-play]");
-                    log.info("视频播放地址：{}", url.attr("data-play"));
+//                    log.info("视频播放地址：{}", url.attr("data-play"));
 
 
                     //新增视频不同线路的url
@@ -334,10 +334,5 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             log.error("出现异常：", e);
             crawErrorService.save(new CrawError().setContent(e.toString()).setCreateTime(new Date()).setVideoNo(id));
         }
-    }
-
-    public static void main(String[] args) {
-        List<String> resultFindAll = ReUtil.findAll("\\d{1,3}", "更新之5集/40", 0, new ArrayList<String>());
-        resultFindAll.forEach(item -> System.out.println(item));
     }
 }

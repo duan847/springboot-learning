@@ -33,14 +33,15 @@ public class VideoController {
      */
     @GetMapping("begin/{beginNo}/end/{endNo}")
     public String start(@PathVariable("beginNo")Integer beginNo,@PathVariable("endNo")Integer endNo){
+        log.info("爬取视频，从编号：{}到：{}", beginNo, endNo);
         if(endNo == null) {
             endNo = beginNo + 1;
         }
         for (int i = beginNo; i < endNo; i++) {
             videoService.crawByNo(i);
         }
-        log.info("爬区视频，从：{}到：{}任务分发完毕", beginNo, endNo);
-        return "爬区视频，从："+beginNo+"到：" + endNo;
+
+        return "爬取视频，从："+beginNo+"到：" + endNo;
     }
 
     /**
