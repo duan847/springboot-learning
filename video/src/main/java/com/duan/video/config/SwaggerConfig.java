@@ -13,8 +13,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- *
- * swagger-ui配置
+ * swagger-ui接口文档配置
  *
  * @author duanjw
  */
@@ -30,6 +29,7 @@ public class SwaggerConfig {
 
     /**
      * 创建api的设置
+     *
      * @return
      */
     @Bean
@@ -47,6 +47,7 @@ public class SwaggerConfig {
 
     /**
      * api显示的基本信息
+     *
      * @return
      */
     private ApiInfo apiInfo() {
@@ -56,7 +57,7 @@ public class SwaggerConfig {
                 .license("Apache 2.0")
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
                 .termsOfServiceUrl("localhost:8080")
-                .contact(new Contact("视频搜索","localhost:8080/swagger-ui.html","554343346@qq.com"))
+                .contact(new Contact("视频搜索", "localhost:8080/swagger-ui.html", "554343346@qq.com"))
                 .version("1.0")
                 .build();
     }

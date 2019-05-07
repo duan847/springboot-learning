@@ -15,15 +15,9 @@ import org.springframework.context.annotation.Configuration;
 public class MybatisPlusConfig {
     /**
      * 1.分页插件
-     * 2.多租户
      */
     @Bean
     public PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor().setDialectType("mysql");
+        return new PaginationInterceptor();
     }
-//
-//    @Bean
-//    public OptimisticLockerInterceptor optimisticLockerInterceptor(){
-//        return new OptimisticLockerInterceptor();
-//    }
 }

@@ -3,16 +3,16 @@ package com.duan.video.service.impl;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.duan.video.common.Constants;
+import com.duan.video.common.Query;
 import com.duan.video.mapper.VideoMapper;
 import com.duan.video.pojo.entity.*;
 import com.duan.video.pojo.vo.ResponseDataUtil;
+import com.duan.video.pojo.vo.VideoDetailVO;
 import com.duan.video.service.*;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.duan.video.common.Constants.BASE_URL;
+import static com.duan.video.common.Constants.JSOUP_CONNECTION_TIMEOUT;
+
 /**
  * 学生service实现
  *
@@ -38,7 +41,7 @@ import java.util.List;
 @Service
 public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements VideoService {
 
-    public static String BASE_URL = "http://www.kuqiyy.com/";
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -163,11 +166,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         return "从：" + startNo + "开始";
     }
 
-    @Override
-    public IPage<Video> selectByTextPage(Page page, String text) {
-        return videoMapper.selectPage(page, new QueryWrapper<Video>().like("name", text));
-    }
-
     /**
      * 根据no更新视频
      *
@@ -187,19 +185,46 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         return false;
     }
 
+    /**
+     * 分页查询视频-简单信息
+     *
+     * @param query 分页参数、条件
+     * @return
+     */
+    @Override
+    public Page<Video> selectSimplePage(Query query) {
+        return query.setRecords(videoMapper.selectSimplePage(query));
+    }
+
+    /**
+     * 分页查询视频-详细信息
+     *
+     * @param query 分页参数、条件
+     * @return
+     */
+    @Override
+    public Page<VideoDetailVO> selectDetailPage(Query query) {
+        return query.setRecords(videoMapper.selectDetailPage(query));
+    }
+
+    /**
+     * 根据视频编号多线程爬取视频，并保存到数据库
+     *
+     * @param no 视频编号
+     */
     @Override
     @Async
-    public void crawByNo(Integer id) {
+    @Transactional(rollbackFor = Exception.class)
+    public void crawByNo(Integer no) {
         try {
-            String startUrl = BASE_URL + "detail/" + id + ".html";
+            String startUrl = BASE_URL + "detail/" + no + ".html";
             //获取请求连接
-            Document document = Jsoup.connect(startUrl).timeout(60 * 1000).get();
+            Document document = Jsoup.connect(startUrl).timeout(JSOUP_CONNECTION_TIMEOUT).get();
             //请求头设置，特别是cookie设置
             log.info("开始爬取：{}", startUrl);
             Elements detail = document.select("dl[class=fed-deta-info fed-margin fed-part-rows fed-part-over]");
             if (null == detail || detail.html().trim().equals("")) {
-//                log.error("没有找到资源，id：{}", id);
-                crawErrorService.save(new CrawError().setContent("无资源").setCreateTime(new Date()).setVideoNo(id));
+                crawErrorService.save(new CrawError().setContent("无资源").setCreateTime(new Date()).setVideoNo(no));
                 return;
             }
             String cover = detail.select("dt a").attr("data-original");
@@ -208,13 +233,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             String remarks = detail.select("dt span[class*=fed-list-remarks]").text();
             String name = detail.select("dd h1").text();
             Elements zhuyan = detail.select("dd ul li");
-//            log.info("cover：{}", cover);
-//            log.info("score：{}", score);
-//            log.info("remarks：{}", remarks);
-
 
             Video video = new Video();
-            video.setNo(id).setCover(cover).setScore(new BigDecimal(score)).setRemarks(remarks).setName(name);
+            video.setNo(no).setCover(cover).setScore(new BigDecimal(score)).setRemarks(remarks).setName(name);
 
             List<Person> staringList = new ArrayList<>();
             List<Person> directorList = new ArrayList<>();
@@ -228,12 +249,10 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                 Elements aTag = element.select("a");
                 String aText = element.select("a").text();
                 if ("简介：".equals(spanText)) {
-//                    log.info("{}", element.text());
                     if (element.text().split("：").length > 1) {
                         video.setSynopsis(element.text().split("：")[1]);
                     }
                 } else if ("更新：".equals(spanText)) {
-//                    log.info("{}", element.text());
                     if (element.text().split("：").length > 1) {
                         video.setUpdateTime(element.text().split("：")[1]);
                     }
@@ -246,93 +265,98 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                     video.setTypeName(aText);
                     video.setType(Constants.dictMap.get(Constants.VIDEO_TYPE_PID_KEY + aText));
                 } else if ("主演：".equals(spanText)) {
-                    aTag.forEach(item -> {
-                        staringList.add(new Person().setName(item.text()).setType(Constants.STARING));
-                    });
+                    aTag.forEach(item -> staringList.add(new Person().setName(item.text()).setType(Constants.STARING)));
                 } else if ("导演：".equals(spanText)) {
-                    aTag.forEach(item -> {
-                        directorList.add(new Person().setName(item.text()).setType(Constants.DIRECTOR));
-                    });
-                } else {
-//                    log.info("{}{}", spanText, aText);
+                    aTag.forEach(item -> directorList.add(new Person().setName(item.text()).setType(Constants.DIRECTOR)));
                 }
             }
 
             //新增视频
             video.insert();
+            Long videoId = video.getId();
 
-            //新增待完结
-            //只要包含"更新"关键字，就添加到待完结
-            if (null != remarks) {
-                Integer haveCount = 0;
-                Integer sumCount = 0;
-                if (StrUtil.containsAny(remarks, "更新")) {
-                    List<String> resultFindAll = ReUtil.findAll("\\d{1,3}", remarks, 0, new ArrayList<String>());
-
-                    int size = resultFindAll.size();
-                    for (int i = 0; i < size; i++) {
-                        Integer count = Integer.parseInt(resultFindAll.get(i));
-                        if (size == 1) {
-                            haveCount = count;
-                        } else if (resultFindAll.size() == 2) {
-                            if (i == 0) {
-                                haveCount = count;
-                            } else {
-                                sumCount = count;
-                            }
-                            //如果总集数不为0，并且已更新集数大于总集数，两数交换
-                            if (sumCount != 0 && haveCount > sumCount) {
-                                haveCount = haveCount ^ sumCount;
-                                sumCount = haveCount ^ sumCount;
-                                haveCount = haveCount ^ sumCount;
-                            }
-                        }
-                    }
-                    incompletionService.save(new Incompletion().setUpdateTime(new Date()).setVideoId(video.getId()).setHaveCount(haveCount).setSumCount(sumCount));
-                }
-            }
+            //根据备注新增待完结视频
+            saveIncompletion(remarks, videoId);
 
             //新增主演&导演
             staringList.addAll(directorList);
-            staringList.forEach(item -> item.setVideoId(video.getId()));
+            staringList.forEach(item -> item.setVideoId(videoId));
             personService.saveBatch(staringList);
 
             Element boxs = document.select("div[class*=fed-drop-tops]").get(0);
-            Elements xianlu = boxs.select("ul[class=fed-part-rows] li");
+            Elements lines = boxs.select("ul[class=fed-part-rows] li");
             Elements dizhi = document.select("div[class=fed-drop-boxs fed-drop-btms fed-matp-v] div");
 
             List<RouteUrl> routeUrlList = new ArrayList<>();
-            for (int i = 0; i < xianlu.size(); i++) {
+            for (int i = 0; i < lines.size(); i++) {
 
 
-                String href = xianlu.get(i).select("a").attr("href");
+                String href = lines.get(i).select("a").attr("href");
                 Integer lineId = Integer.parseInt(href.substring(href.indexOf("-") + 1, href.lastIndexOf("-")));
-//                log.info("线路名：{}，地址：{}，id：{}", xianlu.get(i).select("a").text(), href, lineId);
 
-                // 新增视频线路
-                VideoRoute videoRoute = new VideoRoute().setLine(lineId).setVideoId(video.getId());
+                //新增视频线路
+                VideoRoute videoRoute = new VideoRoute().setLine(lineId).setVideoId(videoId);
                 videoRouteService.save(videoRoute);
 
                 for (Element element : dizhi.get(i).select("ul[class=fed-part-rows] li")) {
-//                    log.info("名称：{}，地址：{}", element.select("a").html(), element.select("a").attr("href"));
 
                     Document videoDocument = Jsoup.connect(BASE_URL + element.select("a").attr("href")).get();
                     Elements url = videoDocument.select("iframe[data-play]");
-//                    log.info("视频播放地址：{}", url.attr("data-play"));
-
 
                     //新增视频不同线路的url
                     RouteUrl routeUrl = new RouteUrl();
-                    routeUrl.setLine(lineId).setName(element.select("a").html()).setUrl(url.attr("data-play")).setVideoId(video.getId());
+                    routeUrl.setLine(lineId).setName(element.select("a").html()).setUrl(url.attr("data-play")).setVideoId(videoId);
                     routeUrlList.add(routeUrl);
                 }
             }
+
+            //新增视频播放地址
             routeUrlService.saveBatch(routeUrlList);
 
         } catch (Exception e) {
-            log.error("异常视频编号：{}", id);
+            log.error("异常视频编号：{}", no);
             log.error("出现异常：", e);
-            crawErrorService.save(new CrawError().setContent(e.toString()).setCreateTime(new Date()).setVideoNo(id));
+            crawErrorService.save(new CrawError().setContent(e.toString()).setCreateTime(new Date()).setVideoNo(no));
         }
+    }
+
+    /**
+     * 根据备注新增待完结视频
+     *
+     * @param remarks
+     * @return
+     */
+    private void saveIncompletion(String remarks, Long videoId) {
+        //新增待完结
+        //只要包含"更新"关键字，就添加到待完结
+        if (null != remarks) {
+            Integer haveCount = 0;
+            Integer sumCount = 0;
+            if (StrUtil.containsAny(remarks, "更新")) {
+                List<String> resultFindAll = ReUtil.findAll("\\d{1,3}", remarks, 0, new ArrayList<String>());
+
+                int size = resultFindAll.size();
+                for (int i = 0; i < size; i++) {
+                    Integer count = Integer.parseInt(resultFindAll.get(i));
+                    if (size == 1) {
+                        haveCount = count;
+                    } else if (resultFindAll.size() == 2) {
+                        if (i == 0) {
+                            haveCount = count;
+                        } else {
+                            sumCount = count;
+                        }
+                        //如果总集数不为0，并且已更新集数大于总集数，两数交换
+                        if (sumCount != 0 && haveCount > sumCount) {
+                            haveCount = haveCount ^ sumCount;
+                            sumCount = haveCount ^ sumCount;
+                            haveCount = haveCount ^ sumCount;
+                        }
+                    }
+                }
+                incompletionService.save(new Incompletion().setUpdateTime(new Date()).setVideoId(videoId).setHaveCount(haveCount).setSumCount(sumCount));
+            }
+        }
+
     }
 }

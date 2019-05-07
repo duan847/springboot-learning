@@ -1,12 +1,10 @@
 package com.duan.video.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.duan.video.pojo.entity.CrawError;
 import com.duan.video.pojo.entity.Incompletion;
 
 /**
- *
- * 学生mapper
+ * 待更新视频mapper
  *
  * @author duanjw
  */

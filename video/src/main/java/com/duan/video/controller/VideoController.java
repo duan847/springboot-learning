@@ -1,12 +1,13 @@
 package com.duan.video.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.duan.video.Query;
-import com.duan.video.pojo.vo.VideoDetailVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.duan.video.common.Query;
+import com.duan.video.pojo.entity.RouteUrl;
 import com.duan.video.pojo.entity.Video;
 import com.duan.video.pojo.entity.VideoRoute;
+import com.duan.video.pojo.vo.VideoDetailVO;
+import com.duan.video.service.RouteUrlService;
 import com.duan.video.service.VideoRouteService;
 import com.duan.video.service.VideoService;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 /**
+ * 视频接口
+ *
  * @author duanjw
  */
 @Slf4j
@@ -27,40 +30,73 @@ public class VideoController {
     private VideoService videoService;
     @Autowired
     private VideoRouteService videoRouteService;
+    @Autowired
+    private RouteUrlService routeUrlService;
+
     /**
+     * 爬取视频，使用多线程爬取，线程配置见
      *
      * @return
+     * @see com.duan.video.config.ThreadPoolConfig
+     * <p>
+     * 从开始编号到截止编号
+     * 开始编号必须
+     * 截止编号默认为开始编号+1
      */
     @GetMapping("begin/{beginNo}/end/{endNo}")
-    public String start(@PathVariable("beginNo")Integer beginNo,@PathVariable("endNo")Integer endNo){
+    public String start(@PathVariable("beginNo") Integer beginNo, @PathVariable("endNo") Integer endNo) {
         log.info("爬取视频，从编号：{}到：{}", beginNo, endNo);
-        if(endNo == null) {
+        if (endNo == null) {
             endNo = beginNo + 1;
         }
         for (int i = beginNo; i < endNo; i++) {
             videoService.crawByNo(i);
         }
-
-        return "爬取视频，从："+beginNo+"到：" + endNo;
+        return "爬取视频，从：" + beginNo + "到：" + endNo;
     }
 
     /**
-     * 根据文本分页查询视频
+     * 分页查询视频-简单信息
+     *
      * @return
      */
-    @ApiOperation("根据文本分页查询视频")
-    @GetMapping("/text/{text}/page")
-    public IPage<Video> selectByTextPage(Page page,@PathVariable String text){
-        return videoService.selectByTextPage(page, text);
+    @GetMapping("/page")
+    @ApiOperation("分页查询视频-简单信息。在url后追加过滤参数，包括——电影名称（name）")
+    public Page<Video> selectSimplePage(@RequestParam Map<String, Object> params) {
+        return videoService.selectSimplePage(new Query(params));
+    }
+
+    /**
+     * 分页查询视频-简单信息
+     *
+     * @return
+     */
+    @GetMapping("/detail/page")
+    @ApiOperation("分页查询视频-详细信息。在url后追加过滤参数，包括——电影名称（name）")
+    public Page<VideoDetailVO> selectDetailPage(@RequestParam Map<String, Object> params) {
+        return videoService.selectDetailPage(new Query(params));
+    }
+
+
+    /**
+     * 根据id分页查询视频线路
+     *
+     * @return
+     */
+    @ApiOperation("根据id分页查询视频线路")
+    @GetMapping("/{id}/route/page")
+    public IPage<VideoRoute> selectSimplePage(Page page, @PathVariable Long id) {
+        return videoRouteService.selectByVideoIdPage(page, id);
     }
 
     /**
      * 根据id分页查询视频播放地址
+     *
      * @return
      */
     @ApiOperation("根据id分页查询视频播放地址")
-    @GetMapping("/{id}/route/page")
-    public IPage<VideoRoute> selectByTextPage(Page page, @PathVariable Long id){
-        return videoRouteService.selectByVideoIdPage(page, id);
+    @GetMapping("/{id}/url/page")
+    public IPage<RouteUrl> selectUrlPage(Page page, @PathVariable Long id) {
+        return routeUrlService.selectByVideoIdPage(page, id);
     }
 }

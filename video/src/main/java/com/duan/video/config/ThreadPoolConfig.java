@@ -1,6 +1,5 @@
 package com.duan.video.config;
 
-import cn.hutool.core.thread.ThreadUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
@@ -11,6 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 线程配置
+ *
  * @author duanjw
  */
 @Configuration

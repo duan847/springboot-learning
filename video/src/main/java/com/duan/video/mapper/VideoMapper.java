@@ -1,25 +1,32 @@
 package com.duan.video.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.duan.video.Query;
+import com.duan.video.common.Query;
 import com.duan.video.pojo.entity.Video;
 import com.duan.video.pojo.vo.VideoDetailVO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- *
- * 学生mapper
+ * 视频mapper
  *
  * @author duanjw
  */
 public interface VideoMapper extends BaseMapper<Video> {
 
     /**
-     * @param query
-     * @param map
+     * 分页查询视频-简单信息
+     * @param query 分页参数、条件
      * @return
      */
-    List<VideoDetailVO> selectPage(Query query);
+    List<Video> selectSimplePage(Query query);
+
+
+    /**
+     * 分页查询视频-详细信息
+     * @param query 分页参数、条件
+     * @return
+     */
+    List<VideoDetailVO> selectDetailPage(Query query);
+
 }

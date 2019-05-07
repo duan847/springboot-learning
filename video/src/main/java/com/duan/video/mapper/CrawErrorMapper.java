@@ -6,7 +6,7 @@ import com.duan.video.pojo.entity.Dict;
 
 /**
  *
- * 学生mapper
+ * 爬取异常mapper
  *
  * @author duanjw
  */

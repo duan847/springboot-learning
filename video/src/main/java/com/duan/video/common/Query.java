@@ -1,26 +1,26 @@
-package com.duan.video;
+package com.duan.video.common;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.Map;
 
+/**
+ * 分页查询对象
+ *
+ * @param <T>
+ */
 public class Query<T> extends Page<T> {
-    private static final String PAGE = "page";
-    private static final String LIMIT = "limit";
-    private static final String ORDER_BY_FIELD = "orderByField";
-    private static final String IS_ASC = "isAsc";
 
     private Map<String, Object> params;
 
 
-
     public Query(Map<String, Object> params) {
-        super(Long.parseLong(params.getOrDefault("current", 1).toString()), Long.parseLong(params.getOrDefault("size", -1).toString()));
+        super(Long.parseLong(params.getOrDefault("current", 1).toString()), Long.parseLong(params.getOrDefault("size", 10).toString()));
         String orderByField = params.getOrDefault("orderByField", "").toString();
         if (StringUtils.isNotEmpty(orderByField)) {
             Boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
-            if(isAsc) {
+            if (isAsc) {
                 this.setAsc(orderByField);
             } else {
                 this.setDesc(orderByField);

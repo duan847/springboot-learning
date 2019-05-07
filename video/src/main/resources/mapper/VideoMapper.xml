@@ -2,13 +2,41 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.duan.video.mapper.VideoMapper">
 
-    <select id="selectPage" resultType="com.duan.video.pojo.vo.VideoDetailVO">
-        select id,name from video
+    <!--视频详细-->
+    <resultMap id="videoDetailResultMap" type="com.duan.video.pojo.vo.VideoDetailVO">
+        <collection property="staringList" ofType="Person" select="selectStaringList" column="id"/>
+        <collection property="directorList" ofType="Person" select="selectDirectorList" column="id"/>
+    </resultMap>
+
+    <!--分页查询视频-简单信息-->
+    <select id="selectSimplePage" resultType="com.duan.video.pojo.entity.Video">
+        select id,name,cover,score,remarks,film_length from video
         <trim prefix="where" prefixOverrides="AND">
-            <if test="name != null and '' != name">
-                <bind name="name_like" value="'%' + name + '%'" />
+            <if test="params.name != null and '' != params.name">
+                <bind name="name_like" value="'%' + params.name + '%'" />
                 AND name like #{name_like}
             </if>
         </trim>
+    </select>
+
+    <!--分页查询视频-详细信息-->
+    <select id="selectDetailPage" resultMap="videoDetailResultMap">
+        select id,name,cover,score,remarks,film_length,year,synopsis,area,update_time from video
+        <trim prefix="where" prefixOverrides="AND">
+            <if test="params.name != null and '' != params.name">
+                <bind name="name_like" value="'%' + params.name + '%'" />
+                AND name like #{name_like}
+            </if>
+        </trim>
+    </select>
+
+    <!--查询视频的主演-->
+    <select id="selectStaringList" resultType="com.duan.video.pojo.entity.Person">
+      select * from person where video_id = #{id} and type = 126
+    </select>
+
+    <!--查询视频的导演-->
+    <select id="selectDirectorList" resultType="com.duan.video.pojo.entity.Person">
+      select * from person where video_id = #{id} and type = 124
     </select>
 </mapper>

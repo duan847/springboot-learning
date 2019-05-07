@@ -1,12 +1,10 @@
 package com.duan.video.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.duan.video.pojo.entity.Person;
 import com.duan.video.pojo.entity.RouteUrl;
 
 /**
- *
- * 学生mapper
+ * 视频播放地址mapper
  *
  * @author duanjw
  */

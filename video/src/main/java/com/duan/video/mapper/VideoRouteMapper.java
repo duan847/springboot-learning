@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.duan.video.pojo.entity.VideoRoute;
 
 /**
- *
- * 学生mapper
+ * 视频线路mapper
  *
  * @author duanjw
  */
