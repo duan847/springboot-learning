@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeTube video</title>
+    <title>视频浏览</title>
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
@@ -97,10 +97,10 @@
                             </div>
                             <div id="search-bar" class="clearfix search-bar-light">
                                 <div class="search-input float-left">
-                                    <input type="search" name="search" placeholder="电影名/类型/演员/上映时间">
+                                    <input type="search" name="search" placeholder="电影名/电视剧名">
                                 </div>
                                 <div class="search-btn float-right text-right">
-                                    <button class="button" name="search" type="submit">搜索视频</button>
+                                    <input class="button" name="search" type="submit" value="搜索视频"/>
                                 </div>
                             </div>
                         </div>
@@ -967,7 +967,7 @@ If" href="https://t.co/jtUNeYAFSVIf">https://t.co/jtUNeYAFSV If</a> not then ple
       search()
     })
     jQuery("input[type=submit]").click(function () {
-        var searchKey = jQuery(this).parent().prev().val();
+        var searchKey = jQuery(this).parent().parent().find("input").val();
         search(searchKey)
     })
 
@@ -979,18 +979,31 @@ If" href="https://t.co/jtUNeYAFSVIf">https://t.co/jtUNeYAFSV If</a> not then ple
         }
         var data={}
         if(!text) {
-            data = {
-                "orderByField" : "year",
-                "isAsc":false
+            const type = getUrlParam("type");
+            if(type){
+                data = {
+                    "orderByField" : "year",
+                    "isAsc":false,
+                    "type":type
+                }
+                jQuery("#search_key h4").html("视频-" + type);
+            } else{
+                data = {
+                    "orderByField" : "year",
+                    "isAsc":false
+                }
+                jQuery("#search_key h4").html("所有视频");
             }
-            jQuery("#search_key h4").html("所有视频");
+
         } else{
             data = {
+                "orderByField" : "year",
+                "isAsc":false,
                 "name" : text
             }
             jQuery("#search_key h4").html("搜索：" + text);
         }
-        jQuery("input[name=search]").val(text);
+        jQuery("input[name=search]input[type!=submit]").val(text);
         let html = '';
         jQuery.get("video/detail/page", data, function (data) {
             jQuery.each(data.records, function (i, item) {

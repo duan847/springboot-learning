@@ -24,8 +24,8 @@
     <select id="selectDetailPage" resultMap="videoDetailResultMap">
         select id,name,cover,score,remarks,film_length,year,synopsis,area,update_time from video
         <trim prefix="where" prefixOverrides="AND">
-            <if test="params.id != null and '' != params.id">
-                AND id = #{id}
+            <if test="params.type != null and '' != params.type">
+                AND type = #{params.type}
             </if>
             <if test="params.name != null and '' != params.name">
                 <bind name="name_like" value="'%' + params.name + '%'" />

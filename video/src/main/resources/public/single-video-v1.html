@@ -1347,13 +1347,14 @@
 
     jQuery.get("video/" + id + "/url/page", function (data) {
 
+
         var options = {
             "autoplay": true,
             "": "zh-CN",
             playbackRates: [0.5, 1, 1.5, 2, 4],
             sources: [{
                 type: "application/x-mpegURL",
-                src: data.records[0].url
+                src: (data.records[0].url).indexOf(".html") > -1 ? data.records[1].url : data.records[0].url
             }]
 
         };

@@ -30,33 +30,12 @@
                 </li>
             </ul>
             <div class="responsive-search">
-                <form method="post">
                     <div class="input-group">
-                        <input class="input-group-field" type="text" placeholder="search Here">
-                        <div class="input-group-button" onclick="searchVideo();">
+                        <input class="input-group-field" type="text" placeholder="电影名/电视剧名">
+                        <div class="input-group-button" onclick="searchVideo(this);">
                             <button><i class="fa fa-search"></i></button>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="off-social">
-                <h6>Get Socialize</h6>
-                <a href="#"><i class="fa fa-facebook"></i></a>
-                <a href="#"><i class="fa fa-twitter"></i></a>
-                <a href="#"><i class="fa fa-google-plus"></i></a>
-                <a href="#"><i class="fa fa-instagram"></i></a>
-                <a href="#"><i class="fa fa-vimeo"></i></a>
-                <a href="#"><i class="fa fa-youtube"></i></a>
-            </div>
-            <div class="top-button">
-                <ul class="menu">
-                    <li>
-                        <a href="submit-post.html">upload Video</a>
-                    </li>
-                    <li class="dropdown-login">
-                        <a href="login.html">login/Register</a>
-                    </li>
-                </ul>
             </div>
         </div>
         <div class="off-canvas-content" data-off-canvas-content>
@@ -97,9 +76,9 @@
                                 <div class="top-bar-left topsearch">
                                     <div class="search-bar-full">
                                         <div class="input-group">
-                                            <input id="input_search" class="input-group-field" type="search"
+                                            <input class="input-group-field" type="search"
                                                    placeholder="搜索 电影名/电视剧名">
-                                            <div class="input-group-button icon-btn" onclick="searchVideo();">
+                                            <div class="input-group-button icon-btn" onclick="searchVideo(this);">
                                                 <input class="button" type="button" value="搜索"/>
                                                 <i class="fa fa-search"></i>
                                             </div>
@@ -229,11 +208,11 @@
                 html += '<div class="item-cat item thumb-border">' +
                     '                                <figure class="premium-img">' +
                     '                                    <img src="http://placehold.it/185x130" alt="carousel">' +
-                    '                                    <a href="categories.html" class="hover-posts">' +
+                    '                                    <a href="archives.html?type='+item.id+'" class="hover-posts">' +
                     '                                        <span><i class="fa fa-search"></i></span>' +
                     '                                    </a>' +
                     '                                </figure>' +
-                    '                                <h6><a href="archives.html?order=year">' + item.value + '</a></h6>' +
+                    '                                <h6><a href="archives.html?type='+item.id+'">' + item.value + '</a></h6>' +
                     '                            </div>'
             })
             jQuery("#owl-demo-cat").html(html);
@@ -284,7 +263,7 @@
                     '                                                    <p>' + item.synopsis + '</p>' +
                     '                                                </div>' +
                     '                                                <div class="post-button">' +
-                    '                                                    <a href="single-video-v2.html" class="secondary-button"><i' +
+                    '                                                    <a href="single-video-v1.html?id=' + item.id + '" class="secondary-button"><i' +
                     '                                                            class="fa fa-play-circle"></i>播放</a>' +
                     '                                                </div>' +
                     '                                            </div>' +
@@ -296,8 +275,8 @@
         });
     });
 
-    function searchVideo() {
-        const text = jQuery("#input_search").val();
+    function searchVideo(obj) {
+        const text = jQuery(obj).prev().val();
         window.location.href = "archives.html?text=" + escape(text);
     }
 
