@@ -31,7 +31,7 @@ public class RouteUrlServiceImpl extends ServiceImpl<RouteUrlMapper, RouteUrl> i
      */
     @Override
     public IPage<RouteUrl> selectByVideoIdPage(Page page, Long id) {
-        return routeUrlMapper.selectPage(page, new QueryWrapper<RouteUrl>().lambda().eq(RouteUrl::getVideoId, id).orderByAsc(RouteUrl::getLine));
+        return routeUrlMapper.selectPage(page, new QueryWrapper<RouteUrl>().lambda().eq(RouteUrl::getVideoId, id).orderByAsc(RouteUrl::getLine,RouteUrl::getName));
 
     }
 }

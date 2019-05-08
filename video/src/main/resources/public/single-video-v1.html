@@ -208,74 +208,16 @@
                         <div class="row secBg">
                             <div class="large-12 columns">
                                 <div class="media-object stack-for-small">
-                                    <div class="media-object-section">
-                                        <div class="author-img-sec">
-                                            <div class="thumbnail author-single-post">
-                                                <a href="#"><img src="http://placehold.it/80x80" alt="post"></a>
-                                            </div>
-                                            <p class="text-center"><a href="#">Joseph John</a></p>
-                                        </div>
-                                    </div>
                                     <div class="media-object-section object-second">
                                         <div class="author-des clearfix">
                                             <div class="post-title">
                                                 <h4></h4>
-                                                <p>
-                                                    <span><i class="fa fa-clock-o"></i>5 January 16</span>
-                                                    <span><i class="fa fa-eye"></i>1,862K</span>
-                                                    <span><i class="fa fa-thumbs-o-up"></i>1,862</span>
-                                                    <span><i class="fa fa-thumbs-o-down"></i>180</span>
-                                                    <span><i class="fa fa-commenting"></i>8</span>
-                                                </p>
-                                            </div>
-                                            <div class="subscribe">
-                                                <form method="post">
-                                                    <button type="submit" name="subscribe">Subscribe</button>
-                                                </form>
                                             </div>
                                         </div>
                                         <div class="social-share">
-                                            <div class="post-like-btn clearfix">
-                                                <form method="post">
-                                                    <button type="submit" name="fav"><i class="fa fa-heart"></i>Add to
-                                                    </button>
+                                            <div class="post-like-btn clearfix" id="set-number">
+                                                <form method="post" onclick="return false">
                                                 </form>
-                                                <a href="#" class="secondary-button"><i
-                                                        class="fa fa-thumbs-o-up"></i></a>
-                                                <a href="#" class="secondary-button"><i class="fa fa-thumbs-o-down"></i></a>
-
-                                                <div class="float-right easy-share" data-easyshare data-easyshare-http
-                                                     data-easyshare-url="http://joinwebs.com">
-                                                    <!-- Total -->
-                                                    <button data-easyshare-button="total">
-                                                        <span>Total</span>
-                                                    </button>
-                                                    <span data-easyshare-total-count>0</span>
-
-                                                    <!-- Facebook -->
-                                                    <button data-easyshare-button="facebook">
-                                                        <span class="fa fa-facebook"></span>
-                                                        <span>Share</span>
-                                                    </button>
-                                                    <span data-easyshare-button-count="facebook">0</span>
-
-                                                    <!-- Twitter -->
-                                                    <button data-easyshare-button="twitter"
-                                                            data-easyshare-tweet-text="">
-                                                        <span class="fa fa-twitter"></span>
-                                                        <span>Tweet</span>
-                                                    </button>
-                                                    <span data-easyshare-button-count="twitter">0</span>
-
-                                                    <!-- Google+ -->
-                                                    <button data-easyshare-button="google">
-                                                        <span class="fa fa-google-plus"></span>
-                                                        <span>+1</span>
-                                                    </button>
-                                                    <span data-easyshare-button-count="google">0</span>
-
-                                                    <div data-easyshare-loader>Loading...</div>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1343,31 +1285,41 @@
         return null;
     }
 
-    const id = getUrlParam("id");
+    var id = getUrlParam("id");
 
-    jQuery.get("video/" + id + "/url/page", function (data) {
+    var title=''
+    //切换视频
+    function switchUrl(url,name){
 
-
+        var player = videojs('my-player');
+        player.src(url);
+        player.load(url);
+        document.title = title + ' - ' +name
+    }
+    jQuery.get("video/" + id + "/url/page",{size:-1}, function (data) {
         var options = {
             "autoplay": true,
             "": "zh-CN",
             playbackRates: [0.5, 1, 1.5, 2, 4],
             sources: [{
                 type: "application/x-mpegURL",
-                src: (data.records[0].url).indexOf(".html") > -1 ? data.records[1].url : data.records[0].url
+                src:(data.records[0].url).indexOf(".html") > -1 ? data.records[1].url : data.records[0].url
             }]
-
         };
-
-
         var player = videojs('my-player', options);
         player.play();
+
+        var html = '';
+        jQuery.each(data.records,function(i,item) {
+            html+= '<button type="submit" name="fav" onclick="switchUrl(\''+item.url+'\',\''+item.name+'\')">'+item.name+'</button>'
+        })
+        jQuery("#set-number form").html(html);
     })
 
     jQuery.get("video/" + id + "/detail", function (data) {
         jQuery(".showmore_one p:first").html(data.synopsis);
         jQuery("div[class=post-title] h4").html(data.name);
-        document.title = data.name
+        document.title = title = data.name
     })
 
 </script>
