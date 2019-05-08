@@ -3,10 +3,12 @@ package com.duan.video.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.duan.video.common.Query;
+import com.duan.video.pojo.entity.Dict;
 import com.duan.video.pojo.entity.RouteUrl;
 import com.duan.video.pojo.entity.Video;
 import com.duan.video.pojo.entity.VideoRoute;
 import com.duan.video.pojo.vo.VideoDetailVO;
+import com.duan.video.service.DictService;
 import com.duan.video.service.RouteUrlService;
 import com.duan.video.service.VideoRouteService;
 import com.duan.video.service.VideoService;
@@ -32,6 +34,8 @@ public class VideoController {
     private VideoRouteService videoRouteService;
     @Autowired
     private RouteUrlService routeUrlService;
+    @Autowired
+    private DictService dictService;
 
     /**
      * 爬取视频，使用多线程爬取，线程配置见
@@ -77,6 +81,17 @@ public class VideoController {
         return videoService.selectDetailPage(new Query(params));
     }
 
+    /**
+     * 根据id查看视频详细
+     *
+     * @return
+     */
+    @GetMapping("/{id}/detail")
+    @ApiOperation("根据id查看视频详细")
+    public VideoDetailVO getDetailById(@PathVariable Long id) {
+        return videoService.getDetailById(id);
+    }
+
 
     /**
      * 根据id分页查询视频线路
@@ -98,5 +113,16 @@ public class VideoController {
     @GetMapping("/{id}/url/page")
     public IPage<RouteUrl> selectUrlPage(Page page, @PathVariable Long id) {
         return routeUrlService.selectByVideoIdPage(page, id);
+    }
+
+    /**
+     * 分页查询视频分类
+     *
+     * @return
+     */
+    @ApiOperation("分页查询视频分类")
+    @GetMapping("/type/page")
+    public IPage<Dict> selectTypePage(Page page) {
+        return dictService.selectTypePage(page);
     }
 }

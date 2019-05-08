@@ -60,4 +60,11 @@ public interface VideoService extends IService<Video> {
      * @return
      */
     Page<VideoDetailVO> selectDetailPage(Query query);
+
+    /**
+     * 根据id查看视频详细
+     * @param id
+     * @return
+     */
+    VideoDetailVO getDetailById(Long id);
 }

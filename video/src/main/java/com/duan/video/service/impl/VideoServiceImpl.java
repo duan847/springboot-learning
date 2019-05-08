@@ -208,6 +208,16 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     /**
+     * 根据id查看视频详细
+     * @param id
+     * @return
+     */
+    @Override
+    public VideoDetailVO getDetailById(Long id) {
+        return videoMapper.getDetailById(id);
+    }
+
+    /**
      * 根据视频编号多线程爬取视频，并保存到数据库
      *
      * @param no 视频编号

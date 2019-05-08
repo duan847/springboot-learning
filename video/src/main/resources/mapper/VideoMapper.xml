@@ -4,8 +4,9 @@
 
     <!--视频详细-->
     <resultMap id="videoDetailResultMap" type="com.duan.video.pojo.vo.VideoDetailVO">
-        <collection property="staringList" ofType="Person" select="selectStaringList" column="id"/>
-        <collection property="directorList" ofType="Person" select="selectDirectorList" column="id"/>
+        <id column="id" property="id" />
+        <!--<collection property="staringList" ofType="Person" select="selectStaringList" column="id"/>-->
+        <!--<collection property="directorList" ofType="Person" select="selectDirectorList" column="id"/>-->
     </resultMap>
 
     <!--分页查询视频-简单信息-->
@@ -23,6 +24,9 @@
     <select id="selectDetailPage" resultMap="videoDetailResultMap">
         select id,name,cover,score,remarks,film_length,year,synopsis,area,update_time from video
         <trim prefix="where" prefixOverrides="AND">
+            <if test="params.id != null and '' != params.id">
+                AND id = #{id}
+            </if>
             <if test="params.name != null and '' != params.name">
                 <bind name="name_like" value="'%' + params.name + '%'" />
                 AND name like #{name_like}
@@ -38,5 +42,11 @@
     <!--查询视频的导演-->
     <select id="selectDirectorList" resultType="com.duan.video.pojo.entity.Person">
       select * from person where video_id = #{id} and type = 124
+    </select>
+
+    <!--根据id查看视频详细-->
+    <select id="getDetailById" resultMap="videoDetailResultMap">
+        select id,name,cover,score,remarks,film_length,year,synopsis,area,update_time from video
+        where id = #{id}
     </select>
 </mapper>
