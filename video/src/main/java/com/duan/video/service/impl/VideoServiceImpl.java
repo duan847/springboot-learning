@@ -3,6 +3,7 @@ package com.duan.video.service.impl;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.duan.video.common.Constants;
@@ -390,6 +391,18 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         String forObject = restTemplate.getForObject(startUrl, String.class);
         System.out.println(forObject);
     }
+
+    /**
+     * 分页查询视频排行榜
+     * @param query
+     * @return
+     */
+    @Override
+    public IPage<VideoDetailVO> selectTop250Page(Query query) {
+        query.getParams().put("type",Constants.MOVIE_TOP250);
+        return query.setRecords(videoMapper.selectSortPage(query));
+    }
+
     public static void main(String[] args) throws IOException {
         Integer id = 26942674;
         String startUrl = "http://api.douban.com/v2/movie/subject/" + id + "?apikey=0b2bdeda43b5688921839c8ecb20399b&city=%E5%8C%97%E4%BA%AC&client=&udid=";

@@ -135,6 +135,16 @@ public class VideoController {
     public IPage<VideoDetailVO> selectHotPage(@RequestParam Map<String, Object> params) {
         return videoService.selectHotPage(new Query(params));
     }
+    /**
+     * 分页查询视频排行榜
+     *
+     * @return
+     */
+    @ApiOperation("分页查询视频排行榜")
+    @GetMapping("/top/page")
+    public IPage<VideoDetailVO> selectTop250Page(@RequestParam Map<String, Object> params) {
+        return videoService.selectTop250Page(new Query(params));
+    }
 
     /**
      * 更新热映电影

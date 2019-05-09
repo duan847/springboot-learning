@@ -1,5 +1,6 @@
 package com.duan.video.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.duan.video.common.Query;
@@ -77,4 +78,11 @@ public interface VideoService extends IService<Video> {
     VideoDetailVO getDetailById(Long id);
 
     void startByDoubanId(Integer id);
+
+    /**
+     * 分页查询视频排行榜
+     * @param query
+     * @return
+     */
+    IPage<VideoDetailVO> selectTop250Page(Query query);
 }
