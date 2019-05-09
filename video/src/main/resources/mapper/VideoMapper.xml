@@ -49,4 +49,10 @@
         select id,name,cover,score,remarks,film_length,year,synopsis,area,update_time from video
         where id = #{id}
     </select>
+
+    <!--分页查询排序视频-->
+    <select id="selectSortPage" resultType="com.duan.video.pojo.vo.VideoDetailVO">
+        select v.id,v.name,v.cover,v.score,v.remarks,v.film_length,v.year,v.synopsis,v.area,v.update_time from video v,video_sort vs
+        where v.id = vs.video_id and vs.type = #{params.type}
+    </select>
 </mapper>

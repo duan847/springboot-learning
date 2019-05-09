@@ -35,4 +35,12 @@ public interface VideoMapper extends BaseMapper<Video> {
      * @return
      */
     VideoDetailVO getDetailById(Long id);
+
+    /**
+     * 分页查询排序视频
+     *
+     * @param query 分页参数、条件
+     * @return
+     */
+    List<VideoDetailVO> selectSortPage(Query query);
 }

@@ -2,6 +2,7 @@
 //
 //import cn.hutool.core.io.file.FileReader;
 //import com.duan.video.VideoApplication;
+//import com.duan.video.common.Query;
 //import com.duan.video.service.VideoService;
 //import lombok.extern.slf4j.Slf4j;
 //import org.jsoup.Jsoup;
@@ -16,7 +17,9 @@
 //import org.springframework.test.context.junit4.SpringRunner;
 //
 //import java.io.IOException;
+//import java.util.HashMap;
 //import java.util.List;
+//import java.util.Map;
 //
 //@RunWith(SpringRunner.class)
 //@SpringBootTest(classes = VideoApplication.class)
@@ -71,5 +74,17 @@
 //    public void douban() throws IOException {
 //        Document document = Jsoup.connect("https://movie.douban.com/subject/26100958/").get();
 //        log.info("豆瓣：{}",document.html());
+//    }
+//
+//    @Test
+//    public void startByDoubanId() {
+//        videoService.startByDoubanId(1);
+//    }
+//
+//    @Test
+//    public void selectHotPage() {
+//        Map map = new HashMap<>();
+//        map.put("size",10);
+//        videoService.selectHotPage(new Query(map));
 //    }
 //}

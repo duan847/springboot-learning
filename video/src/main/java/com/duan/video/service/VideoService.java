@@ -62,9 +62,19 @@ public interface VideoService extends IService<Video> {
     Page<VideoDetailVO> selectDetailPage(Query query);
 
     /**
+     * 分页查询热映视频
+     *
+     * @param query 分页参数、条件
+     * @return
+     */
+    Page<VideoDetailVO> selectHotPage(Query query);
+
+    /**
      * 根据id查看视频详细
      * @param id
      * @return
      */
     VideoDetailVO getDetailById(Long id);
+
+    void startByDoubanId(Integer id);
 }

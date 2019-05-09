@@ -48,4 +48,20 @@ public class Constants {
      * jsoup超时时间，1分钟
      */
     public static final Integer JSOUP_CONNECTION_TIMEOUT = 60 * 1000;
+
+
+    /**
+     * 热映电影
+     */
+    public static final int MOVIE_HOT = 128;
+
+    /**
+     * top250
+     */
+    public static final int MOVIE_TOP250 = 129;
+
+    /**
+     * 即将上映
+     */
+    public static final int MOVIE_COMING = 130;
 }

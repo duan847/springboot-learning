@@ -2,16 +2,14 @@ package com.duan.video.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.duan.video.common.Constants;
 import com.duan.video.common.Query;
 import com.duan.video.pojo.entity.Dict;
 import com.duan.video.pojo.entity.RouteUrl;
 import com.duan.video.pojo.entity.Video;
 import com.duan.video.pojo.entity.VideoRoute;
 import com.duan.video.pojo.vo.VideoDetailVO;
-import com.duan.video.service.DictService;
-import com.duan.video.service.RouteUrlService;
-import com.duan.video.service.VideoRouteService;
-import com.duan.video.service.VideoService;
+import com.duan.video.service.*;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +34,8 @@ public class VideoController {
     private RouteUrlService routeUrlService;
     @Autowired
     private DictService dictService;
-
+    @Autowired
+    private VideoSortService videoSortService;
     /**
      * 爬取视频，使用多线程爬取，线程配置见
      *
@@ -124,5 +123,56 @@ public class VideoController {
     @GetMapping("/type/page")
     public IPage<Dict> selectTypePage(Page page) {
         return dictService.selectTypePage(page);
+    }
+
+    /**
+     * 分页查询热映视频
+     *
+     * @return
+     */
+    @ApiOperation("分页查询热映视频")
+    @GetMapping("/hot/page")
+    public IPage<VideoDetailVO> selectHotPage(@RequestParam Map<String, Object> params) {
+        return videoService.selectHotPage(new Query(params));
+    }
+
+    /**
+     * 更新热映电影
+     * @return
+     */
+    @ApiOperation("更新热映电影")
+    @GetMapping("sort/hot")
+    public boolean updateHotSort(){
+        return videoSortService.updateByType(Constants.MOVIE_HOT, 1);
+    }
+
+    /**
+     * 更新top250电影
+     * @return
+     */
+    @ApiOperation("更新top250电影")
+    @GetMapping("sort/top250")
+    public boolean updateTop250Sort(){
+        return videoSortService.updateByType(Constants.MOVIE_TOP250, 1);
+    }
+
+    /**
+     * 更新即将上映电影
+     * @return
+     */
+    @ApiOperation("更新即将上映电影")
+    @GetMapping("sort/coming")
+    public boolean updateComingSort(){
+        return videoSortService.updateByType(Constants.MOVIE_COMING, 1);
+    }
+
+    /**
+     * 更新所有电影排序
+     * @return
+     */
+    @ApiOperation("更新所有电影排序")
+    @GetMapping("sort/all")
+    public boolean updateAllSort(){
+        return videoSortService.updateAllSort();
     }
 }
