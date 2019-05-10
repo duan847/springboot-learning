@@ -69,7 +69,7 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
                         .header("accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
                         .header("accept-encoding","gzip, deflate, br")
                         .header("accept-language","zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7")
-                        .get();;
+                        .get();
             } catch (IOException e) {
                 e.printStackTrace();
             }

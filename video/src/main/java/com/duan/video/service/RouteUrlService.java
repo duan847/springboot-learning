@@ -19,4 +19,11 @@ public interface RouteUrlService extends IService<RouteUrl> {
      * @return
      */
     IPage<RouteUrl> selectByVideoIdPage(Page page, Long id);
+
+
+    /**
+     * 更新所有视频时长
+     * @return
+     */
+    Boolean updateAllFilmLength(Integer current, Integer size);
 }

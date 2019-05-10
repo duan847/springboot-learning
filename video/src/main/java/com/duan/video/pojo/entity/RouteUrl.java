@@ -52,6 +52,12 @@ public class RouteUrl extends Model<RouteUrl> {
     @ApiModelProperty("播放地址")
     private String url;
 
+    /**
+     * 时长
+     */
+    @ApiModelProperty("时长")
+    private Double filmLength;
+
     @Override
     protected Serializable pkVal() {
         return id;

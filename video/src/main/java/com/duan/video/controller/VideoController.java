@@ -185,4 +185,19 @@ public class VideoController {
     public boolean updateAllSort(){
         return videoSortService.updateAllSort();
     }
+
+    /**
+     * 更新所有视频时长
+     * @return
+     */
+    @ApiOperation("更新所有视频时长")
+    @GetMapping("url/filmlength")
+    public boolean updateAllFilmLength(){
+        long count = routeUrlService.count();
+        Integer size = 100;
+        for (int i = 0; i < count; i+=size) {
+            routeUrlService.updateAllFilmLength(i, size);
+        }
+        return true;
+    }
 }

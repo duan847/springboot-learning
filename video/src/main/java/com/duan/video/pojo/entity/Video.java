@@ -94,7 +94,7 @@ public class Video extends Model<Video> {
      * 片长
      */
     @ApiModelProperty("片长")
-    private Long filmLength;
+    private Double filmLength;
 
     /**
      * 评分

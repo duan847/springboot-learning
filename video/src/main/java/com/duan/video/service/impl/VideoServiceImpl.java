@@ -403,15 +403,4 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         return query.setRecords(videoMapper.selectSortPage(query));
     }
 
-    public static void main(String[] args) throws IOException {
-        Integer id = 26942674;
-        String startUrl = "http://api.douban.com/v2/movie/subject/" + id + "?apikey=0b2bdeda43b5688921839c8ecb20399b&city=%E5%8C%97%E4%BA%AC&client=&udid=";
-        //获取请求连接
-        Document document = Jsoup.connect(startUrl).timeout(JSOUP_CONNECTION_TIMEOUT).ignoreContentType(true).get();
-        //请求头设置，特别是cookie设置
-        log.info("开始爬取：{}", startUrl);
-
-        System.out.println(document.text());
-
-    }
 }
