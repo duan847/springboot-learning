@@ -113,4 +113,14 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
         updateByType(Constants.MOVIE_COMING, 1);
         return true;
     }
+
+    /**
+     * 根据视频id删除视频排序
+     * @param videoId
+     * @return
+     */
+    @Override
+    public boolean deleteByVideoId(Long videoId) {
+        return remove(new QueryWrapper<VideoSort>().lambda().eq(VideoSort::getVideoId, videoId));
+    }
 }

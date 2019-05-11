@@ -23,4 +23,11 @@ public interface VideoSortService extends IService<VideoSort> {
      * @return
      */
     boolean updateAllSort();
+
+    /**
+     * 根据视频id删除视频排序
+     * @param videoId
+     * @return
+     */
+    boolean deleteByVideoId(Long videoId);
 }

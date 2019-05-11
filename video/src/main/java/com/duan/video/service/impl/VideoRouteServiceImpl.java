@@ -28,6 +28,11 @@ public class VideoRouteServiceImpl extends ServiceImpl<VideoRouteMapper, VideoRo
         return videoRouteMapper.selectPage(page, new QueryWrapper<VideoRoute>().lambda().eq(VideoRoute::getVideoId, videoId));
     }
 
+    /**
+     * 根据视频id删除视频线路
+     * @param videoId
+     * @return
+     */
     @Override
     public boolean deleteByVideoId(Long videoId) {
         videoRouteMapper.delete(new QueryWrapper<VideoRoute>().lambda().eq(VideoRoute::getVideoId, videoId));

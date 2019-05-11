@@ -9,4 +9,11 @@ import com.duan.video.pojo.entity.Incompletion;
  * @author duanjw
  */
 public interface IncompletionService extends IService<Incompletion> {
+
+    /**
+     * 根据视频id删除待完结
+     * @param videoId
+     * @return
+     */
+    boolean deleteByVideoId(Long videoId);
 }

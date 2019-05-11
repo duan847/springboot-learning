@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <title>BeTube video</title>
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="css/theme.css">
@@ -212,6 +212,7 @@
                                         <div class="author-des clearfix">
                                             <div class="post-title">
                                                 <h4></h4>
+                                                <button onclick="updateAllInfoById()">获取最新集数</button>
                                             </div>
                                         </div>
                                         <div class="social-share">
@@ -1278,6 +1279,11 @@
 <script src="js/videojs-playbackrate-adjuster.js"></script>
 
 <script>
+
+    jQuery(document).ready(function(jQuery){
+      loadRouteUrl();
+    })
+
     function getUrlParam(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);
@@ -1285,7 +1291,7 @@
         return null;
     }
 
-    var id = getUrlParam("id");
+
 
     var title=''
     //切换视频
@@ -1296,31 +1302,49 @@
         player.load(url);
         document.title = title + ' - ' +name
     }
-    jQuery.get("video/" + id + "/url/page",{size:-1}, function (data) {
-        var options = {
-            "autoplay": true,
-            "": "zh-CN",
-            playbackRates: [0.5, 1, 1.5, 2, 4],
-            sources: [{
-                type: "application/x-mpegURL",
-                src:(data.records[0].url).indexOf(".html") > -1 ? data.records[1].url : data.records[0].url
-            }]
-        };
-        var player = videojs('my-player', options);
-        player.play();
 
-        var html = '';
-        jQuery.each(data.records,function(i,item) {
-            html+= '<button type="submit" name="fav" onclick="switchUrl(\''+item.url+'\',\''+item.name+'\')">'+item.name+'</button>'
+
+    var id = getUrlParam("id");
+    function loadRouteUrl(){
+        jQuery.get("video/" + id + "/url/page",{size:-1}, function (data) {
+            var options = {
+                "autoplay": true,
+                "": "zh-CN",
+                playbackRates: [0.5, 1, 1.5, 2, 4],
+                sources: [{
+                    type: "application/x-mpegURL",
+                    src:(data.records[0].url).indexOf(".html") > -1 ? data.records[1].url : data.records[0].url
+                }]
+            };
+            var player = videojs('my-player', options);
+            player.play();
+
+            var html = '';
+            jQuery.each(data.records,function(i,item) {
+                html+= '<button type="submit" name="fav" onclick="switchUrl(\''+item.url+'\',\''+item.name+'\')">'+item.name+'</button>'
+            })
+            jQuery("#set-number form").html(html);
         })
-        jQuery("#set-number form").html(html);
-    })
+        jQuery.get("video/" + id + "/detail", function (data) {
+            jQuery(".showmore_one p:first").html(data.synopsis);
+            jQuery("div[class=post-title] h4").html(data.name);
+            document.title = title = data.name
+        })
+    }
 
-    jQuery.get("video/" + id + "/detail", function (data) {
-        jQuery(".showmore_one p:first").html(data.synopsis);
-        jQuery("div[class=post-title] h4").html(data.name);
-        document.title = title = data.name
-    })
+
+
+
+
+    function updateAllInfoById() {
+        jQuery.ajax({
+            url: 'video/' + id + '/allinfo',
+            type: 'PUT',
+            success: function( response ) {
+                loadRouteUrl();
+            }
+        });
+    }
 
 </script>
 </body>

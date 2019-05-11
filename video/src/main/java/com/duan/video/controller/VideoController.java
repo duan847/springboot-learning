@@ -200,4 +200,15 @@ public class VideoController {
         }
         return true;
     }
+
+    /**
+     * 根据id更新视频所有信息
+     * @param id
+     * @return
+     */
+    @ApiOperation("根据id更新视频所有信息")
+    @PutMapping("{id}/allinfo")
+    public boolean updateAllInfoById(@PathVariable Long id){
+        return videoService.updateAllInfoById(id);
+    }
 }

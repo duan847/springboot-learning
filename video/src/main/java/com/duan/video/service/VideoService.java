@@ -85,4 +85,18 @@ public interface VideoService extends IService<Video> {
      * @return
      */
     IPage<VideoDetailVO> selectTop250Page(Query query);
+
+    /**
+     * 根据id更新视频所有信息
+     * @param id
+     * @return
+     */
+    boolean updateAllInfoById(Long id);
+
+    /**
+     * 根据id删除视频所有信息
+     * @param id
+     * @return
+     */
+    boolean deleteAllInfoById(Long id);
 }

@@ -75,6 +75,16 @@ public class RouteUrlServiceImpl extends ServiceImpl<RouteUrlMapper, RouteUrl> i
         return true;
     }
 
+    /**
+     * 根据视频id删除视频播放地址
+     * @param videoId
+     * @return
+     */
+    @Override
+    public boolean deleteByVideoId(Long videoId) {
+        return remove(new QueryWrapper<RouteUrl>().lambda().eq(RouteUrl::getVideoId, videoId));
+    }
+
     public Double getFilmLengthByUrl(String url) throws IOException {
         Document document = Jsoup.connect(url)
                 .ignoreContentType(true)
@@ -86,7 +96,6 @@ public class RouteUrlServiceImpl extends ServiceImpl<RouteUrlMapper, RouteUrl> i
                 .header("Accept-Encoding", "gzip")
                 .header("accept-language", "zh-CN")
                 .get();
-        System.out.println(document.text());
         String[] result = document.text().split(" ");
 
         String m3u8Url;

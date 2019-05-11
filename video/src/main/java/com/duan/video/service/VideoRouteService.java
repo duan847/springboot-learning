@@ -14,5 +14,10 @@ public interface VideoRouteService extends IService<VideoRoute> {
 
     IPage<VideoRoute> selectByVideoIdPage(Page page, Long id);
 
+    /**
+     * 根据视频id删除视频线路
+     * @param videoId
+     * @return
+     */
     boolean deleteByVideoId(Long videoId);
 }

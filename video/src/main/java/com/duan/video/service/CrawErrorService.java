@@ -9,4 +9,11 @@ import com.duan.video.pojo.entity.CrawError;
  * @author duanjw
  */
 public interface CrawErrorService extends IService<CrawError> {
+
+    /**
+     * 根据视频编号删除爬取异常
+     * @param videoNo
+     * @return
+     */
+    boolean deleteByVideoNo(Integer videoNo);
 }

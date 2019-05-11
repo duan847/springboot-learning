@@ -403,4 +403,40 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         return query.setRecords(videoMapper.selectSortPage(query));
     }
 
+    /**
+     * 根据id更新视频所有信息
+     * @param id
+     * @return
+     */
+    @Transactional
+    @Override
+    public boolean updateAllInfoById(Long id) {
+        QueryWrapper<Video> noWrapper = new QueryWrapper<Video>().eq("id", id);
+        Video video = videoMapper.selectOne(noWrapper);
+        if (null != video) {
+            Integer no = video.getNo();
+            crawErrorService.deleteByVideoNo(no);
+            deleteAllInfoById(id);
+            crawByNo(no);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 根据id删除视频所有信息
+     * @param id
+     * @return
+     */
+    @Override
+    public boolean deleteAllInfoById(Long id) {
+        videoMapper.deleteById(id);
+        videoRouteService.deleteByVideoId(id);
+        routeUrlService.deleteByVideoId(id);
+        personService.deleteByVideoId(id);
+        incompletionService.deleteByVideoId(id);
+
+        return true;
+    }
+
 }

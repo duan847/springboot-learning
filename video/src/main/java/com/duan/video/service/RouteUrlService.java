@@ -26,4 +26,11 @@ public interface RouteUrlService extends IService<RouteUrl> {
      * @return
      */
     Boolean updateAllFilmLength(Integer current, Integer size);
+
+    /**
+     * 根据视频id删除视频播放地址
+     * @param videoId
+     * @return
+     */
+    boolean deleteByVideoId(Long videoId);
 }
