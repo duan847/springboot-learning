@@ -36,7 +36,7 @@ public interface VideoService extends IService<Video> {
      *
      * @param no 视频编号
      */
-    void crawByNo(Integer no);
+    void crawByNo(Integer no, Long id);
 
     /**
      * 根据no更新视频

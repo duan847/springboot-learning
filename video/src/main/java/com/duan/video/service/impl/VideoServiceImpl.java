@@ -148,7 +148,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                     break;
                 }
             }
-            crawByNo(j);
+            crawByNo(j,null);
         }
         return "从：" + startNo + "开始";
     }
@@ -162,7 +162,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Transactional
     public String start(Integer[] startNo) {
         for (int j = 0; j < startNo.length; j++) {
-            crawByNo(startNo[j]);
+            crawByNo(startNo[j],null);
         }
         return "从：" + startNo + "开始";
     }
@@ -178,9 +178,8 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         QueryWrapper<Video> noWrapper = new QueryWrapper<Video>().eq("no", no);
         Video video = videoMapper.selectOne(noWrapper);
         if (null != video) {
-            videoMapper.delete(noWrapper);
             videoRouteService.deleteByVideoId(video.getId());
-            start(new Integer[no]);
+            crawByNo(no,video.getId());
             return true;
         }
         return false;
@@ -238,7 +237,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
-    public void crawByNo(Integer no) {
+    public void crawByNo(Integer no,Long id) {
         try {
             String startUrl = BASE_URL + "detail/" + no + ".html";
             //获取请求连接
@@ -293,9 +292,8 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                     aTag.forEach(item -> directorList.add(new Person().setName(item.text()).setType(Constants.DIRECTOR)));
                 }
             }
-
-            //新增视频
-            video.insert();
+            //新增或修改视频
+            video.setId(id).insertOrUpdate();
             Long videoId = video.getId();
 
             //根据备注新增待完结视频
@@ -417,7 +415,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             Integer no = video.getNo();
             crawErrorService.deleteByVideoNo(no);
             deleteAllInfoById(id);
-            crawByNo(no);
+            crawByNo(no,id);
             return true;
         }
         return false;
@@ -430,7 +428,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
      */
     @Override
     public boolean deleteAllInfoById(Long id) {
-        videoMapper.deleteById(id);
         videoRouteService.deleteByVideoId(id);
         routeUrlService.deleteByVideoId(id);
         personService.deleteByVideoId(id);

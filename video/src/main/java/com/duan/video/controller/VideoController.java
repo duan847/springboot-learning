@@ -53,7 +53,7 @@ public class VideoController {
             endNo = beginNo + 1;
         }
         for (int i = beginNo; i < endNo; i++) {
-            videoService.crawByNo(i);
+            videoService.crawByNo(i,null);
         }
         return "爬取视频，从：" + beginNo + "到：" + endNo;
     }

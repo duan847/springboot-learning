@@ -62,7 +62,7 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
             //获取请求连接
             Document document = null;
             try {
-                document = Jsoup.connect(url + "?start=" + start + "&count=" + count).ignoreContentType(true)
+                document = Jsoup.connect(url + "?start=" + start + "&count=" + count + "&apikey=0df993c66c0c636e29ecbb5344252a4a").ignoreContentType(true)
                         .ignoreHttpErrors(true)
                         .timeout(1000 * 30)
                         .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36")
