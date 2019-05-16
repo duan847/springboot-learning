@@ -13,6 +13,7 @@ import com.duan.video.service.*;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -148,8 +149,10 @@ public class VideoController {
 
     /**
      * 更新热映电影
+     * 每天凌晨1点执行
      * @return
      */
+    @Scheduled(cron = "0 0 1 * * ?")
     @ApiOperation("更新热映电影")
     @GetMapping("sort/hot")
     public boolean updateHotSort(){
@@ -158,8 +161,10 @@ public class VideoController {
 
     /**
      * 更新top250电影
+     * 每天凌晨1点执行
      * @return
      */
+    @Scheduled(cron = "0 0 1 * * ?")
     @ApiOperation("更新top250电影")
     @GetMapping("sort/top250")
     public boolean updateTop250Sort(){
@@ -178,10 +183,12 @@ public class VideoController {
 
     /**
      * 更新所有电影排序
+     *
      * @return
      */
     @ApiOperation("更新所有电影排序")
     @GetMapping("sort/all")
+
     public boolean updateAllSort(){
         return videoSortService.updateAllSort();
     }
