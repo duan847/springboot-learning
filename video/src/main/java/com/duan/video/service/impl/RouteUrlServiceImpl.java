@@ -56,7 +56,7 @@ public class RouteUrlServiceImpl extends ServiceImpl<RouteUrlMapper, RouteUrl> i
     @Async
     public Boolean updateAllFilmLength(Integer current, Integer size) {
         List<RouteUrl> routeUrlList = new ArrayList<>();
-        List<RouteUrl> list = super.list(new QueryWrapper<RouteUrl>().last("LIMIT " + current + "," + size));
+        List<RouteUrl> list = super.list(new QueryWrapper<RouteUrl>().isNull("film_length").last("LIMIT " + current + "," + size));
 
         list.forEach(item -> {
             try {
