@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.duan.video.common.Query;
 import com.duan.video.pojo.entity.Video;
 import com.duan.video.pojo.vo.VideoDetailVO;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public interface VideoService extends IService<Video> {
      *
      * @param no 视频编号
      */
-    void crawByNo(Integer no);
+    void crawByNo(Integer no,Long videoId);
 
     /**
      * 根据no更新视频
@@ -99,4 +100,17 @@ public interface VideoService extends IService<Video> {
      * @return
      */
     boolean deleteAllInfoById(Long id);
+
+    /**
+     * 爬取最新的视频
+     * @return
+     */
+    boolean crawNow();
+
+    /**
+     * updateByIncompletion
+     *
+     * @return
+     */
+    boolean updateByIncompletion();
 }

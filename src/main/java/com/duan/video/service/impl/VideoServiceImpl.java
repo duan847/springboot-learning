@@ -1,5 +1,7 @@
 package com.duan.video.service.impl;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -20,6 +22,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -140,7 +143,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             endNo = 10000;
         }
 
-        for (int j = startNo; j < endNo; j++) {
+        for (int j = startNo; j <= endNo; j++) {
             if (j % 100 == 0) {
                 Video videoNow = new Video().selectOne(new QueryWrapper<Video>().eq("no", j));
                 if (null != videoNow) {
@@ -148,7 +151,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                     break;
                 }
             }
-            crawByNo(j);
+            crawByNo(j, null);
         }
         return "从：" + startNo + "开始";
     }
@@ -162,7 +165,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Transactional
     public String start(Integer[] startNo) {
         for (int j = 0; j < startNo.length; j++) {
-            crawByNo(startNo[j]);
+            crawByNo(startNo[j], null);
         }
         return "从：" + startNo + "开始";
     }
@@ -216,12 +219,13 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
      */
     @Override
     public Page<VideoDetailVO> selectHotPage(Query query) {
-        query.getParams().put("type",Constants.MOVIE_HOT);
+        query.getParams().put("type", Constants.MOVIE_HOT);
         return query.setRecords(videoMapper.selectSortPage(query));
     }
 
     /**
      * 根据id查看视频详细
+     *
      * @param id
      * @return
      */
@@ -238,7 +242,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
-    public void crawByNo(Integer no) {
+    public void crawByNo(Integer no, Long videoId) {
         try {
             String startUrl = BASE_URL + "detail/" + no + ".html";
             //获取请求连接
@@ -295,8 +299,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             }
 
             //新增视频
-            video.insert();
-            Long videoId = video.getId();
+            video.setId(videoId).insertOrUpdate();
 
             //根据备注新增待完结视频
             saveIncompletion(remarks, videoId);
@@ -394,17 +397,19 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     /**
      * 分页查询视频排行榜
+     *
      * @param query
      * @return
      */
     @Override
     public IPage<VideoDetailVO> selectTop250Page(Query query) {
-        query.getParams().put("type",Constants.MOVIE_TOP250);
+        query.getParams().put("type", Constants.MOVIE_TOP250);
         return query.setRecords(videoMapper.selectSortPage(query));
     }
 
     /**
      * 根据id更新视频所有信息
+     *
      * @param id
      * @return
      */
@@ -417,7 +422,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             Integer no = video.getNo();
             crawErrorService.deleteByVideoNo(no);
             deleteAllInfoById(id);
-            crawByNo(no);
+            crawByNo(no, video.getId());
             return true;
         }
         return false;
@@ -425,18 +430,128 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     /**
      * 根据id删除视频所有信息
+     *
      * @param id
      * @return
      */
     @Override
     public boolean deleteAllInfoById(Long id) {
-        videoMapper.deleteById(id);
         videoRouteService.deleteByVideoId(id);
         routeUrlService.deleteByVideoId(id);
         personService.deleteByVideoId(id);
         incompletionService.deleteByVideoId(id);
 
         return true;
+    }
+
+    /**
+     * 爬取最新的视频
+     * 定时：每隔3小时执行一次
+     *
+     * @return
+     */
+    @Override
+    @Scheduled(cron = "0 0 0/3 * * ?")
+    @Transactional(rollbackFor = Exception.class)
+    public synchronized boolean crawNow() {
+        Integer size = 10;
+        boolean flag = true;
+        log.info("开始爬取最新的视频，时间：{}", DateUtil.now());
+        do {
+            Video video = new Video().selectOne(new QueryWrapper<Video>().lambda().last("LIMIT 1").orderByDesc(Video::getNo));
+            Integer startNo = video.getNo() + 1;
+            String result = start(startNo, video.getNo() + size);
+            log.info(result);
+            //如果爬取的结果大于一半，再次爬取
+            List<Video> videoList = new Video().selectList(new QueryWrapper<Video>().lambda().ge(Video::getNo, startNo));
+            if (videoList.size() < size / 2 - 1) {
+                flag = false;
+                log.info("爬取数/需要爬取数：{}/{}，不足一半，停止本次运行，等待下次运行", videoList.size(), size);
+            } else {
+                log.info("爬取数/需要爬取数：{}/{}，超过一半，继续运行", videoList.size(), size);
+
+            }
+        } while (flag);
+        return true;
+    }
+
+    /**
+     * 更新待完结的视频
+     * 定时：每天凌晨2点
+     * 条件：待完结的更新时间小于一个月
+     *      待完结的remarks和现在视频的remarks不相等
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @Scheduled(cron = "0 0 2 * * ?")
+    public boolean updateByIncompletion() {
+
+        Integer size = 10;
+        Integer current = 0;
+        boolean flag = true;
+        log.info("开始更新待完结视频，时间：{}", DateUtil.now());
+        do {
+
+            IPage<Incompletion> page = incompletionService.page(new Page<>(current, size), new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth()));
+            List<Incompletion> incompletionList = page.getRecords();
+            if (incompletionList.size() == 0) {
+                log.info("待完结视频更新任务完成，等待下次执行");
+                flag = false;
+            }
+            current += 1;
+
+            incompletionList.forEach(item -> {
+                Long videoId = item.getVideoId();
+                if(null != videoId) {
+                    Video video = new Video().setId(videoId).selectById();
+                    if(null != video) {
+                        String thisVideoRemarks = video.getRemarks();
+                        Integer no = video.getNo();
+                        String newRemarks = getRemarksByNo(no);
+                        //如果现在视频的remarks和获取到的remarks不一样，更新视频
+                        if(StrUtil.isNotEmpty(thisVideoRemarks) && newRemarks !=null && !StrUtil.equals(thisVideoRemarks,newRemarks)) {
+                            this.updateAllInfoById(videoId);
+                            item.setUpdateTime(DateTime.now());
+                            incompletionService.updateById(item);
+                            log.info("待完结视频更新，编号：{}，更新前remarks：{}，最新后remarks：{}", no, thisVideoRemarks, newRemarks);
+                        }
+                    } else {
+                        incompletionService.removeById(item.getId());
+                    }
+                }
+            });
+
+        } while (flag);
+        return true;
+    }
+
+    /**
+     * 根据编号获取视频remarks
+     * @param no
+     * @return
+     */
+    public String getRemarksByNo(Integer no){
+        String remarks = null;
+
+        try {
+            String startUrl = BASE_URL + "detail/" + no + ".html";
+            //获取请求连接
+            Document document = Jsoup.connect(startUrl).timeout(JSOUP_CONNECTION_TIMEOUT).get();
+            //请求头设置，特别是cookie设置
+            Elements detail = document.select("dl[class=fed-deta-info fed-margin fed-part-rows fed-part-over]");
+            if (null == detail || detail.html().trim().equals("")) {
+                crawErrorService.save(new CrawError().setContent("无资源").setCreateTime(new Date()).setVideoNo(no));
+                return null;
+            }
+            remarks = detail.select("dt span[class*=fed-list-remarks]").text();
+
+        } catch (Exception e) {
+            log.error("异常视频编号：{}", no);
+            log.error("更新待完结出现异常：", e);
+            crawErrorService.save(new CrawError().setContent(e.toString()).setCreateTime(new Date()).setVideoNo(no));
+        }
+        return remarks;
     }
 
 }

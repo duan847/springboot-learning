@@ -54,7 +54,7 @@ public class VideoController {
             endNo = beginNo + 1;
         }
         for (int i = beginNo; i < endNo; i++) {
-            videoService.crawByNo(i);
+            videoService.crawByNo(i, null);
         }
         return "爬取视频，从：" + beginNo + "到：" + endNo;
     }
@@ -217,5 +217,25 @@ public class VideoController {
     @PutMapping("{id}/allinfo")
     public boolean updateAllInfoById(@PathVariable Long id){
         return videoService.updateAllInfoById(id);
+    }
+
+    /**
+     * 爬取最新视频
+     * @return
+     */
+    @ApiOperation("爬取最新视频")
+    @GetMapping("now")
+    public boolean crawNow(){
+        return videoService.crawNow();
+    }
+
+    /**
+     * 更新待完结视频
+     * @return
+     */
+    @ApiOperation("更新待完结视频")
+    @GetMapping("incompletion")
+    public boolean updateByIncompletion(){
+        return videoService.updateByIncompletion();
     }
 }
