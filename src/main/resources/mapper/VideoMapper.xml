@@ -25,7 +25,10 @@
         select id,name,cover,score,remarks,film_length,year,synopsis,area,update_time from video
         <trim prefix="where" prefixOverrides="AND">
             <if test="params.type != null and '' != params.type">
-                AND type = #{params.type}
+                AND type in
+                <foreach collection="params.type.split(',')" open="(" close=")" item="t" separator=",">
+                    #{t}
+                </foreach>
             </if>
             <if test="params.name != null and '' != params.name">
                 <bind name="name_like" value="'%' + params.name + '%'" />

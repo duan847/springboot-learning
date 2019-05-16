@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @date 2019/5/7
  */
 @SpringBootApplication
-@EnableScheduling
+//@EnableScheduling
 public class VideoApplication {
 
     public static void main(String[] args) {
