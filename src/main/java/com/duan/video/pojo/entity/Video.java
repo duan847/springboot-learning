@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 
 /**
@@ -118,8 +119,12 @@ public class Video extends Model<Video> {
      * 更新时间
      */
     @ApiModelProperty("更新时间")
-    private String updateTime;
-
+    private Date updateTime;
+    /**
+     * 更新时间临时
+     */
+    @ApiModelProperty("更新时间临时")
+    private String updateTimeTmp;
 
     /**
      * 视频编号

@@ -281,7 +281,8 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                     }
                 } else if ("更新：".equals(spanText)) {
                     if (element.text().split("：").length > 1) {
-                        video.setUpdateTime(element.text().split("：")[1]);
+                        video.setUpdateTimeTmp(element.text().split("：")[1]);
+                        video.setUpdateTime(DateUtil.date());
                     }
                 } else if ("年份：".equals(spanText)) {
                     video.setYear(aText);
@@ -486,13 +487,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Transactional(rollbackFor = Exception.class)
     @Scheduled(cron = "0 0 1/3 * * ?")
     public boolean updateByIncompletion() {
-
-        Integer size = 10;
-        Integer current = 0;
+        Integer size = 30;
+        Integer current = 20;
         boolean flag = true;
         log.info("开始更新待完结视频，时间：{}", DateUtil.now());
         do {
-
             IPage<Incompletion> page = incompletionService.page(new Page<>(current, size), new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth()));
             List<Incompletion> incompletionList = page.getRecords();
             if (incompletionList.size() == 0) {
@@ -500,26 +499,31 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                 flag = false;
             }
             current += 1;
-
+            List<Long> videoIds = new ArrayList<>();
+            //找出需要更新的待完结视频
             incompletionList.forEach(item -> {
                 Long videoId = item.getVideoId();
                 if(null != videoId) {
-                    Video video = new Video().setId(videoId).selectById();
-                    if(null != video) {
-                        String thisVideoRemarks = video.getRemarks();
-                        Integer no = video.getNo();
-                        String newRemarks = getRemarksByNo(no);
-                        //如果现在视频的remarks和获取到的remarks不一样，更新视频
-                        if(StrUtil.isNotEmpty(thisVideoRemarks) && newRemarks !=null && !StrUtil.equals(thisVideoRemarks,newRemarks)) {
-                            this.updateAllInfoById(videoId);
-                            item.setUpdateTime(DateTime.now());
-                            incompletionService.deleteByVideoId(videoId);
-                            log.info("待完结视频更新，编号：{}，更新前remarks：{}，最新后remarks：{}", no, thisVideoRemarks, newRemarks);
-                        }
-                    } else {
-                        incompletionService.deleteByVideoId(videoId);
-                    }
+                    videoIds.add(videoId);
                 }
+            });
+            if (videoIds.size() == 0) {
+                log.info("待完结视频更新任务完成，等待下次执行");
+                flag = false;
+            }
+            //更新待完结视频
+            List<Video> videoList = videoMapper.selectBatchIds(videoIds);
+            videoList.forEach(video -> {
+                    String thisVideoRemarks = video.getRemarks();
+                    Integer no = video.getNo();
+                    String newRemarks = getRemarksByNo(no);
+                    //如果现在视频的remarks和获取到的remarks不一样，更新视频
+                    if(StrUtil.isNotEmpty(thisVideoRemarks) && newRemarks !=null && !StrUtil.equals(thisVideoRemarks,newRemarks)) {
+                        Long videoId = video.getId();
+                        this.updateAllInfoById(videoId);
+                        incompletionService.deleteByVideoId(videoId);
+                        log.info("待完结视频更新，编号：{}，更新前remarks：{}，最新后remarks：{}", no, thisVideoRemarks, newRemarks);
+                    }
             });
 
         } while (flag);
