@@ -27,7 +27,6 @@
         <module>excel</module>
         <module>amqp</module>
         <module>datajpa</module>
-        <module>video</module>
         <module>elasticsearch</module>
     </modules>
     <parent>
