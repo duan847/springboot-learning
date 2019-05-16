@@ -513,11 +513,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                         if(StrUtil.isNotEmpty(thisVideoRemarks) && newRemarks !=null && !StrUtil.equals(thisVideoRemarks,newRemarks)) {
                             this.updateAllInfoById(videoId);
                             item.setUpdateTime(DateTime.now());
-                            incompletionService.updateById(item);
+                            incompletionService.deleteByVideoId(videoId);
                             log.info("待完结视频更新，编号：{}，更新前remarks：{}，最新后remarks：{}", no, thisVideoRemarks, newRemarks);
                         }
                     } else {
-                        incompletionService.removeById(item.getId());
+                        incompletionService.deleteByVideoId(videoId);
                     }
                 }
             });
