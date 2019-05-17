@@ -43,17 +43,22 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
     @Override
     public boolean updateByType(Integer type, Integer page){
         String url = null;
+        String typeName = "";
         switch (type){
             case Constants.MOVIE_HOT :
                 url = "http://api.douban.com/v2/movie/in_theaters";
+                typeName = "热映电影";
                 break;
             case Constants.MOVIE_TOP250 :
                 url = "http://api.douban.com/v2/movie/top250";
+                typeName = "top250";
                 break;
             case Constants.MOVIE_COMING :
                 url = "http://api.douban.com/v2/movie/coming_soon";
+                typeName = "即将上映";
                 break;
         }
+        log.info("{}，开始更新", typeName);
         Integer count = 100;
         List<String> list = new ArrayList<>();
         boolean flag = true;
@@ -62,7 +67,7 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
             //获取请求连接
             Document document = null;
             try {
-                document = Jsoup.connect(url + "?start=" + start + "&count=" + count).ignoreContentType(true)
+                document = Jsoup.connect(url + "?start=" + start + "&count=" + count + "&apikey=0df993c66c0c636e29ecbb5344252a4a").ignoreContentType(true)
                         .ignoreHttpErrors(true)
                         .timeout(1000 * 30)
                         .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36")
@@ -71,7 +76,7 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
                         .header("accept-language","zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7")
                         .get();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("{}更新失败",typeName);
             }
 
             JSONObject jsonObject = JSONObject.parseObject(document.text());
@@ -95,6 +100,7 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
                 videoSortList.add(new VideoSort().setSort(i).setType(type).setVideoId(video.getId()));
             }
         }
+        log.info("{},更新条数：{}", typeName, videoSortList.size());
         if(videoSortList.size() > 0) {
             //先删除，再新增
             super.remove(new QueryWrapper<VideoSort>().lambda().eq(VideoSort::getType,type));
