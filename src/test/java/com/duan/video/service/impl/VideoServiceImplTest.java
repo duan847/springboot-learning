@@ -65,7 +65,7 @@
 //    @Test
 //    public void getById() {
 //        for (int i = 0; i < 10; i++) {
-//            videoService.crawByNo(i);
+//            videoService.crawByNo(i,null);
 //        }
 //    }
 //
@@ -86,5 +86,10 @@
 //        Map map = new HashMap<>();
 //        map.put("size",10);
 //        videoService.selectHotPage(new Query(map));
+//    }
+//
+//    @Test
+//    public void deleteAllInfoById() {
+//        videoService.deleteAllInfoById(1128324955751100417L);
 //    }
 //}

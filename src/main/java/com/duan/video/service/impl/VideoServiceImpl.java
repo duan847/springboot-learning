@@ -513,6 +513,10 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             });
             //更新待完结视频
             List<Video> videoList = videoMapper.selectBatchIds(videoIds);
+            if (videoList.size() == 0) {
+                log.info("结束：待完结视频更新，等待下次执行");
+                break;
+            }
             videoList.forEach(video -> {
                     String thisVideoRemarks = video.getRemarks();
                     Integer no = video.getNo();
