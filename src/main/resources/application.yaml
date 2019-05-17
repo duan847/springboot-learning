@@ -24,5 +24,3 @@ mybatis-plus:
 
 rest:
   ReadTimeout=35000:
-server:
-  port: 8888
