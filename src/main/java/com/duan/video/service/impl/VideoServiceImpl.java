@@ -462,7 +462,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     public synchronized boolean crawNow() {
         Integer size = 10;
         boolean flag = true;
-        log.info("开始爬取最新的视频，时间：{}", DateUtil.now());
+        log.info("开始：爬取最新的视频，时间：{}", DateUtil.now());
         do {
             Video video = new Video().selectOne(new QueryWrapper<Video>().lambda().last("LIMIT 1").orderByDesc(Video::getNo));
             Integer startNo = video.getNo() + 1;
@@ -472,9 +472,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             List<Video> videoList = new Video().selectList(new QueryWrapper<Video>().lambda().ge(Video::getNo, startNo));
             if (videoList.size() < size / 2 - 1) {
                 flag = false;
-                log.info("爬取数/需要爬取数：{}/{}，不足一半，停止本次运行，等待下次运行", videoList.size(), size);
+                log.info("结束：爬取最新视频，爬取数/需要爬取数：{}/{}，不足一半，停止本次运行，等待下次运行", videoList.size(), size);
             } else {
-                log.info("爬取数/需要爬取数：{}/{}，超过一半，继续运行", videoList.size(), size);
+                log.info("最新视频：爬取数/需要爬取数：{}/{}，超过一半，继续运行", videoList.size(), size);
 
             }
         } while (flag);
@@ -494,14 +494,13 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     public boolean updateByIncompletion() {
         Integer size = 30;
         Integer current = 20;
-        boolean flag = true;
-        log.info("开始更新待完结视频，时间：{}", DateUtil.now());
+        log.info("开始：待完结视频更新，时间：{}", DateUtil.now());
         do {
             IPage<Incompletion> page = incompletionService.page(new Page<>(current, size), new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth()));
             List<Incompletion> incompletionList = page.getRecords();
             if (incompletionList.size() == 0) {
-                log.info("待完结视频更新任务完成，等待下次执行");
-                flag = false;
+                log.info("结束：待完结视频更新，等待下次执行");
+                break;
             }
             current += 1;
             List<Long> videoIds = new ArrayList<>();
@@ -512,10 +511,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                     videoIds.add(videoId);
                 }
             });
-            if (videoIds.size() == 0) {
-                log.info("待完结视频更新任务完成，等待下次执行");
-                flag = false;
-            }
             //更新待完结视频
             List<Video> videoList = videoMapper.selectBatchIds(videoIds);
             videoList.forEach(video -> {
@@ -527,11 +522,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                         Long videoId = video.getId();
                         this.updateAllInfoById(videoId);
                         incompletionService.deleteByVideoId(videoId);
-                        log.info("待完结视频更新，编号：{}，更新前remarks：{}，最新后remarks：{}", no, thisVideoRemarks, newRemarks);
+                        log.info("待完结更新：编号：{}，更新前remarks：{}，最新后remarks：{}", no, thisVideoRemarks, newRemarks);
                     }
             });
 
-        } while (flag);
+        } while (true);
         return true;
     }
 
