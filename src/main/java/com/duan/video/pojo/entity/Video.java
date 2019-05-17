@@ -116,10 +116,17 @@ public class Video extends Model<Video> {
     private String year;
 
     /**
+     * 创建时间
+     */
+    @ApiModelProperty("创建时间")
+    private Date createTime;
+
+    /**
      * 更新时间
      */
     @ApiModelProperty("更新时间")
     private Date updateTime;
+
     /**
      * 更新时间临时
      */

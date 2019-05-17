@@ -272,6 +272,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                 if (null == element.text() || "".equals(element.text().trim())) {
                     continue;
                 }
+                if(videoId!=null) {
+                    video.setUpdateTime(DateUtil.date());
+                }
                 String spanText = element.select("span").text();
                 Elements aTag = element.select("a");
                 String aText = element.select("a").text();
@@ -282,7 +285,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                 } else if ("更新：".equals(spanText)) {
                     if (element.text().split("：").length > 1) {
                         video.setUpdateTimeTmp(element.text().split("：")[1]);
-                        video.setUpdateTime(DateUtil.date());
+                        if(videoId==null) {
+                            video.setCreateTime(DateUtil.date());
+                        }
                     }
                 } else if ("年份：".equals(spanText)) {
                     video.setYear(aText);
