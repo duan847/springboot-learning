@@ -306,13 +306,13 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
             //新增视频
             video.setId(videoId).insertOrUpdate();
-
+            final long newVideoId = video.getId();
             //根据备注新增待完结视频
-            saveIncompletion(remarks, videoId);
+            saveIncompletion(remarks, newVideoId);
 
             //新增主演&导演
             staringList.addAll(directorList);
-            staringList.forEach(item -> item.setVideoId(videoId));
+            staringList.forEach(item -> item.setVideoId(newVideoId));
             personService.saveBatch(staringList);
 
             Element boxs = document.select("div[class*=fed-drop-tops]").get(0);
@@ -327,7 +327,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                 Integer lineId = Integer.parseInt(href.substring(href.indexOf("-") + 1, href.lastIndexOf("-")));
 
                 //新增视频线路
-                VideoRoute videoRoute = new VideoRoute().setLine(lineId).setVideoId(videoId);
+                VideoRoute videoRoute = new VideoRoute().setLine(lineId).setVideoId(newVideoId);
                 videoRouteService.save(videoRoute);
 
                 for (Element element : dizhi.get(i).select("ul[class=fed-part-rows] li")) {
@@ -337,7 +337,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
                     //新增视频不同线路的url
                     RouteUrl routeUrl = new RouteUrl();
-                    routeUrl.setLine(lineId).setName(element.select("a").html()).setUrl(url.attr("data-play")).setVideoId(videoId);
+                    routeUrl.setLine(lineId).setName(element.select("a").html()).setUrl(url.attr("data-play")).setVideoId(newVideoId);
                     routeUrlList.add(routeUrl);
                 }
             }

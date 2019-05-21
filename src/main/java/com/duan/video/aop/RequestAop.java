@@ -37,25 +37,18 @@ public class RequestAop {
 
         Date startTime = DateUtil.date();
         Object proceed = joinPoint.proceed();
-        log.info("response:{}", proceed);
         Date endTime = DateUtil.date();
         try {
-
             // 接收到请求，记录请求内容
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
             String url = request.getRequestURI();
             String method = request.getMethod();
-            String queryString = request.getQueryString();
-            Object[] args = joinPoint.getArgs();
-            String params = "";
             //获取GET请求参数
-            if (args.length > 0) {
-                params = queryString;
-            }
+            String queryString = request.getQueryString();
             long timeDiff = Integer.parseInt(String.valueOf(DateUtil.between(startTime, endTime, DateUnit.MS)));
             RequestLog requestLog = new RequestLog();
-            requestLog.setIp(IpUtil.getIpAddr(request)).setUrl(url).setHttpMethod(method).setClassName(joinPoint.getSignature().getDeclaringTypeName()).setMethod(joinPoint.getSignature().getName()).setParams(params).setStartTime(startTime).setEndTime(endTime).setTimeDiff(timeDiff);
+            requestLog.setIp(IpUtil.getIpAddr(request)).setUrl(url).setHttpMethod(method).setClassName(joinPoint.getSignature().getDeclaringTypeName()).setMethod(joinPoint.getSignature().getName()).setParams(queryString).setStartTime(startTime).setEndTime(endTime).setTimeDiff(timeDiff);
             requestLog.insert();
 
         } catch (Exception e) {

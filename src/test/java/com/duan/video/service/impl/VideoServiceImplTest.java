@@ -42,7 +42,7 @@
 //
 //    @Test
 //    public void start() {
-//        videoService.start(1,10);
+//        videoService.start(80617,80617);
 //    }
 //
 //    @Test
@@ -59,7 +59,7 @@
 //    @Test
 //    public void start2(){
 //        //49564
-//        videoService.start(new Integer[]{78422});
+//        videoService.start(new Integer[]{79561});
 //    }
 //
 //    @Test
@@ -90,6 +90,6 @@
 //
 //    @Test
 //    public void deleteAllInfoById() {
-//        videoService.deleteAllInfoById(1128324955751100417L);
+//        videoService.deleteAllInfoById(1130324427871985666L);
 //    }
 //}
