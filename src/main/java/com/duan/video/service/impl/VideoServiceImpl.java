@@ -483,14 +483,14 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     /**
      * 更新待完结的视频
-     * 定时：从1小时开始每3小时执行一次
+     * 定时：从1小时开始每1小时执行一次
      * 条件：待完结的更新时间小于一个月
      *      待完结的remarks和现在视频的remarks不相等
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 0 1/3 * * ?")
+    @Scheduled(cron = "0 0 1/1 * * ?")
     public boolean updateByIncompletion() {
         Integer size = 30;
         Integer current = 20;
