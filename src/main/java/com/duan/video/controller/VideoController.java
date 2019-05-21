@@ -150,7 +150,7 @@ public class VideoController {
 
     /**
      * 更新热映电影
-     * 定时：每天晚上11点执行
+     * 定时：每天早上11点执行
      * @return
      */
     @Scheduled(cron = "0 0 11 * * ?")
@@ -162,7 +162,7 @@ public class VideoController {
 
     /**
      * 更新top250电影
-     * 定时：每天晚上11点5分执行
+     * 定时：每天早上11点5分执行
      * @return
      */
     @Scheduled(cron = "0 5 11 * * ?")

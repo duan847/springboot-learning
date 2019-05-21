@@ -52,7 +52,7 @@ public class RequestAop {
             requestLog.insert();
 
         } catch (Exception e) {
-            log.error("记录请求日志出现异常：{}", e.getMessage());
+            log.error("记录请求日志出现异常", e);
         }
 
         return proceed;
