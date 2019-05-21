@@ -1,13 +1,11 @@
 package com.duan.video.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.duan.video.common.Constants;
 import com.duan.video.common.Query;
-import com.duan.video.pojo.entity.Dict;
-import com.duan.video.pojo.entity.RouteUrl;
-import com.duan.video.pojo.entity.Video;
-import com.duan.video.pojo.entity.VideoRoute;
+import com.duan.video.pojo.entity.*;
 import com.duan.video.pojo.vo.VideoDetailVO;
 import com.duan.video.service.*;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +36,8 @@ public class VideoController {
     private DictService dictService;
     @Autowired
     private VideoSortService videoSortService;
+    @Autowired
+    private CrawErrorService crawErrorService;
     /**
      * 爬取视频，使用多线程爬取，线程配置见
      *
@@ -149,7 +150,7 @@ public class VideoController {
 
     /**
      * 更新热映电影
-     * 定时：每天晚上11点执行
+     * 定时：每天早上11点执行
      * @return
      */
     @Scheduled(cron = "0 0 11 * * ?")
@@ -161,7 +162,7 @@ public class VideoController {
 
     /**
      * 更新top250电影
-     * 定时：每天晚上11点5分执行
+     * 定时：每天早上11点5分执行
      * @return
      */
     @Scheduled(cron = "0 5 11 * * ?")
@@ -237,5 +238,21 @@ public class VideoController {
     @GetMapping("incompletion")
     public boolean updateByIncompletion(){
         return videoService.updateByIncompletion();
+    }
+
+    /**
+     * 根据爬取异常的内容重新爬取视频
+     * @param content
+     * @return
+     */
+    @ApiOperation("根据爬取异常的内容重新爬取视频")
+    @GetMapping("error/content/{content}")
+    public boolean updateByCrawError(@PathVariable String content) {
+        List<CrawError> crawErrorList = crawErrorService.list(new QueryWrapper<CrawError>().lambda().eq(CrawError::getContent, content));
+        crawErrorList.forEach( item -> {
+            videoService.crawByNo(item.getVideoNo(),null);
+            crawErrorService.removeById(item.getId());
+        });
+        return true;
     }
 }
