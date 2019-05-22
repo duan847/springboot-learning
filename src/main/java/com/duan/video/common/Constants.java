@@ -64,4 +64,34 @@ public class Constants {
      * 即将上映
      */
     public static final int MOVIE_COMING = 130;
+    /**
+     * 爬取最新的视频开始的消息
+     */
+    public static final String CRAW_NOW_SRART_MSG = "===========最新视频开始爬取。爬取时间：{}===========";
+
+    /**
+     * 爬取最新的视频结束的消息
+     */
+    public static final String CRAW_NOW_END_MSG = "最新视频爬取结束，本次爬取数/需要爬取数：{}/{}，不足一半，停止本次爬取，等待下次运行";
+
+    /**
+     * 爬取最新的视频继续运行的消息
+     */
+    public static final String CRAW_NOW_RUN_MSG = "最新视频：爬取数/需要爬取数：{}/{}，超过一半，继续运行";
+
+
+    /**
+     * 更新待完结视频开始的消息
+     */
+    public static final String UPDATE_INCOMPLETION_START_MSG = "===========待完结视频开始更新，共{}条。更新时间：{}===========";
+
+    /**
+     * 更新待完结视频结束的消息
+     */
+    public static final String UPDATE_INCOMPLETION_END_MSG = "待完结视频更新结束，等待下次执行";
+
+    /**
+     * 待完结视频更新完成的消息
+     */
+    public static final String INCOMPLETION_UPDATE_MSG = "待完结视频更新：编号：{}，更新前remarks：{}，更新后remarks：{}";
 }

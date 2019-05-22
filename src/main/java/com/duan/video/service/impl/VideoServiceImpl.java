@@ -1,9 +1,9 @@
 package com.duan.video.service.impl;
 
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -272,7 +272,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                 if (null == element.text() || "".equals(element.text().trim())) {
                     continue;
                 }
-                if(videoId!=null) {
+                if (videoId != null) {
                     video.setUpdateTime(DateUtil.date());
                 }
                 String spanText = element.select("span").text();
@@ -285,7 +285,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                 } else if ("更新：".equals(spanText)) {
                     if (element.text().split("：").length > 1) {
                         video.setUpdateTimeTmp(element.text().split("：")[1]);
-                        if(videoId==null) {
+                        if (videoId == null) {
                             video.setCreateTime(DateUtil.date());
                         }
                     }
@@ -365,7 +365,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         if (null != remarks) {
             Integer haveCount = 0;
             Integer sumCount = 0;
-            if (StrUtil.containsAny(remarks, "更新","TC","TS","HC")) {
+            if (StrUtil.containsAny(remarks, "更新", "TC", "TS", "HC")) {
                 List<String> resultFindAll = ReUtil.findAll("\\d{1,3}", remarks, 0, new ArrayList<String>());
 
                 int size = resultFindAll.size();
@@ -419,11 +419,10 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
      * @param id
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateAllInfoById(Long id) {
-        QueryWrapper<Video> noWrapper = new QueryWrapper<Video>().eq("id", id);
-        Video video = videoMapper.selectOne(noWrapper);
+        Video video = videoMapper.selectOne(new QueryWrapper<Video>().lambda().eq(Video::getId, id));
         if (null != video) {
             Integer no = video.getNo();
             crawErrorService.deleteByVideoNo(no);
@@ -461,9 +460,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Transactional(rollbackFor = Exception.class)
     public synchronized boolean crawNow() {
         Integer size = 10;
-        boolean flag = true;
-        log.info("开始：爬取最新的视频，时间：{}", DateUtil.now());
+        log.info(Constants.CRAW_NOW_SRART_MSG, DateUtil.now());
         do {
+            //从当前视频最大编号+1开始爬取
             Video video = new Video().selectOne(new QueryWrapper<Video>().lambda().last("LIMIT 1").orderByDesc(Video::getNo));
             Integer startNo = video.getNo() + 1;
             String result = start(startNo, video.getNo() + size);
@@ -471,13 +470,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             //如果爬取的结果大于一半，再次爬取
             List<Video> videoList = new Video().selectList(new QueryWrapper<Video>().lambda().ge(Video::getNo, startNo));
             if (videoList.size() < size / 2 - 1) {
-                flag = false;
-                log.info("结束：爬取最新视频，爬取数/需要爬取数：{}/{}，不足一半，停止本次运行，等待下次运行", videoList.size(), size);
+                log.info(Constants.CRAW_NOW_END_MSG, videoList.size(), size);
+                break;
             } else {
-                log.info("最新视频：爬取数/需要爬取数：{}/{}，超过一半，继续运行", videoList.size(), size);
-
+                log.info(Constants.CRAW_NOW_RUN_MSG, videoList.size(), size);
             }
-        } while (flag);
+        } while (true);
         return true;
     }
 
@@ -485,7 +483,8 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
      * 更新待完结的视频
      * 定时：从1小时开始每1小时执行一次
      * 条件：待完结的更新时间小于一个月
-     *      待完结的remarks和现在视频的remarks不相等
+     * 待完结的remarks和现在视频的remarks不相等
+     *
      * @return
      */
     @Override
@@ -494,12 +493,14 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     public boolean updateByIncompletion() {
         Integer size = 30;
         Integer current = 20;
-        log.info("开始：待完结视频更新，时间：{}", DateUtil.now());
+        LambdaQueryWrapper<Incompletion> queryWrapper = new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth());
+        int count = incompletionService.count(queryWrapper);
+        log.info(Constants.UPDATE_INCOMPLETION_START_MSG, count, DateUtil.now());
         do {
-            IPage<Incompletion> page = incompletionService.page(new Page<>(current, size), new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth()));
+            IPage<Incompletion> page = incompletionService.page(new Page<>(current, size), queryWrapper);
             List<Incompletion> incompletionList = page.getRecords();
             if (incompletionList.size() == 0) {
-                log.info("结束：待完结视频更新，等待下次执行");
+                log.info(Constants.UPDATE_INCOMPLETION_END_MSG);
                 break;
             }
             current += 1;
@@ -507,27 +508,27 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             //找出需要更新的待完结视频
             incompletionList.forEach(item -> {
                 Long videoId = item.getVideoId();
-                if(null != videoId) {
+                if (null != videoId) {
                     videoIds.add(videoId);
                 }
             });
-            //更新待完结视频
+            //待完结视频存在于视频中，则更新待完结视频
             List<Video> videoList = videoMapper.selectBatchIds(videoIds);
             if (videoList.size() == 0) {
-                log.info("结束：待完结视频更新，等待下次执行");
+                log.info(Constants.UPDATE_INCOMPLETION_END_MSG);
                 break;
             }
             videoList.forEach(video -> {
-                    String thisVideoRemarks = video.getRemarks();
-                    Integer no = video.getNo();
-                    String newRemarks = getRemarksByNo(no);
-                    //如果现在视频的remarks和获取到的remarks不一样，更新视频
-                    if(StrUtil.isNotEmpty(thisVideoRemarks) && newRemarks !=null && !StrUtil.equals(thisVideoRemarks,newRemarks)) {
-                        Long videoId = video.getId();
-                        this.updateAllInfoById(videoId);
-                        incompletionService.deleteByVideoId(videoId);
-                        log.info("待完结更新：编号：{}，更新前remarks：{}，最新后remarks：{}", no, thisVideoRemarks, newRemarks);
-                    }
+                String thisVideoRemarks = video.getRemarks();
+                Integer no = video.getNo();
+                String newRemarks = getRemarksByNo(no);
+                //如果现在视频的remarks和获取到的remarks不一样，更新视频
+                if (StrUtil.isNotEmpty(thisVideoRemarks) && newRemarks != null && !StrUtil.equals(thisVideoRemarks, newRemarks)) {
+                    Long videoId = video.getId();
+                    this.updateAllInfoById(videoId);
+                    incompletionService.deleteByVideoId(videoId);
+                    log.info(Constants.INCOMPLETION_UPDATE_MSG, no, thisVideoRemarks, newRemarks);
+                }
             });
 
         } while (true);
@@ -536,10 +537,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     /**
      * 根据编号获取视频remarks
+     *
      * @param no
      * @return
      */
-    public String getRemarksByNo(Integer no){
+    public String getRemarksByNo(Integer no) {
         String remarks = null;
 
         try {
