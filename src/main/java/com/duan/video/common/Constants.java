@@ -65,6 +65,10 @@ public class Constants {
      */
     public static final int MOVIE_COMING = 130;
     /**
+     * 热门电视剧
+     */
+    public static final int MV_HOT = 131;
+    /**
      * 爬取最新的视频开始的消息
      */
     public static final String CRAW_NOW_SRART_MSG = "===========最新视频开始爬取。爬取时间：{}===========";

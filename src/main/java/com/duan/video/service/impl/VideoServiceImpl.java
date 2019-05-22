@@ -536,6 +536,17 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     /**
+     * 分页查询热播电视剧
+     * @param query
+     * @return
+     */
+    @Override
+    public IPage<VideoDetailVO> selectMVHotPage(Query query) {
+        query.getParams().put("type", Constants.MV_HOT);
+        return query.setRecords(videoMapper.selectSortPage(query));
+    }
+
+    /**
      * 根据编号获取视频remarks
      *
      * @param no

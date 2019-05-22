@@ -44,6 +44,7 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
     public boolean updateByType(Integer type, Integer page){
         String url = null;
         String typeName = "";
+        boolean flag = true;
         switch (type){
             case Constants.MOVIE_HOT :
                 url = "http://api.douban.com/v2/movie/in_theaters";
@@ -57,11 +58,16 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
                 url = "http://api.douban.com/v2/movie/coming_soon";
                 typeName = "即将上映";
                 break;
+            case Constants.MV_HOT:
+                url = "https://movie.douban.com/j/search_subjects?type=tv&tag=%E7%83%AD%E9%97%A8&page_limit=50&page_start=0";
+                typeName = "热门电视剧";
+                flag = false;
+                break;
         }
         log.info("{}，开始更新", typeName);
         Integer count = 100;
         List<String> list = new ArrayList<>();
-        boolean flag = true;
+
         do{
             Integer start = (page - 1) * count;
             //获取请求连接

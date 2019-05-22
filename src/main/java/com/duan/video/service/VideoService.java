@@ -113,4 +113,11 @@ public interface VideoService extends IService<Video> {
      * @return
      */
     boolean updateByIncompletion();
+
+    /**
+     * 分页查询热播电视剧
+     * @param query
+     * @return
+     */
+    IPage<VideoDetailVO> selectMVHotPage(Query query);
 }

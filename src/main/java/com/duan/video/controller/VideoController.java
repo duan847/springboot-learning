@@ -137,6 +137,17 @@ public class VideoController {
     public IPage<VideoDetailVO> selectHotPage(@RequestParam Map<String, Object> params) {
         return videoService.selectHotPage(new Query(params));
     }
+
+    /**
+     * 分页查询热播电视剧
+     *
+     * @return
+     */
+    @ApiOperation("分页查询热播电视剧")
+    @GetMapping("/mvhot/page")
+    public IPage<VideoDetailVO> selectMVHotPage(@RequestParam Map<String, Object> params) {
+        return videoService.selectMVHotPage(new Query(params));
+    }
     /**
      * 分页查询视频排行榜
      *
@@ -170,6 +181,18 @@ public class VideoController {
     @GetMapping("sort/top250")
     public boolean updateTop250Sort(){
         return videoSortService.updateByType(Constants.MOVIE_TOP250, 1);
+    }
+
+    /**
+     * 更新top250电影
+     * 定时：每天早上11点5分执行
+     * @return
+     */
+    @Scheduled(cron = "0 10 11 * * ?")
+    @ApiOperation("更新top250电影")
+    @GetMapping("sort/mvhot")
+    public boolean updateMVHotSort(){
+        return videoSortService.updateByType(Constants.MV_HOT, 1);
     }
 
     /**
