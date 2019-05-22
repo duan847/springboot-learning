@@ -15,7 +15,7 @@
         <trim prefix="where" prefixOverrides="AND">
             <if test="params.name != null and '' != params.name">
                 <bind name="name_like" value="'%' + params.name + '%'" />
-                AND name like #{name_like}
+                AND name like #{name_like} and type &lt; 1000
             </if>
         </trim>
     </select>
@@ -32,7 +32,7 @@
             </if>
             <if test="params.name != null and '' != params.name">
                 <bind name="name_like" value="'%' + params.name + '%'" />
-                AND name like #{name_like}
+                AND name like #{name_like} and type &lt; 1000
             </if>
         </trim>
     </select>

@@ -456,7 +456,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
      * @return
      */
     @Override
-    @Scheduled(cron = "0 0 0/3 * * ?")
+    @Scheduled(cron = "0 0 0/2 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public synchronized boolean crawNow() {
         Integer size = 10;
@@ -489,15 +489,14 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 0 1/1 * * ?")
+    @Scheduled(cron = "0 0 1/2 * * ?")
     public boolean updateByIncompletion() {
         Integer size = 30;
-        Integer current = 20;
-        LambdaQueryWrapper<Incompletion> queryWrapper = new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth());
-        int count = incompletionService.count(queryWrapper);
+        Integer current = 0;
+        int count = incompletionService.count(new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth()));
         log.info(Constants.UPDATE_INCOMPLETION_START_MSG, count, DateUtil.now());
         do {
-            IPage<Incompletion> page = incompletionService.page(new Page<>(current, size), queryWrapper);
+            IPage<Incompletion> page = incompletionService.page(new Page<>(current, size),  new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth()));
             List<Incompletion> incompletionList = page.getRecords();
             if (incompletionList.size() == 0) {
                 log.info(Constants.UPDATE_INCOMPLETION_END_MSG);

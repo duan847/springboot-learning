@@ -1,8 +1,10 @@
 //package com.duan.video.service.impl;
 //
 //import cn.hutool.core.io.file.FileReader;
+//import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 //import com.duan.video.VideoApplication;
 //import com.duan.video.common.Query;
+//import com.duan.video.pojo.entity.Video;
 //import com.duan.video.service.VideoService;
 //import lombok.extern.slf4j.Slf4j;
 //import org.jsoup.Jsoup;
@@ -90,6 +92,11 @@
 //
 //    @Test
 //    public void deleteAllInfoById() {
-//        videoService.deleteAllInfoById(1130324427871985666L);
+//        List<Video> videoList = videoService.list(new QueryWrapper<Video>().lambda().last("LIMIT 50").orderByDesc(Video::getNo));
+//        videoList.forEach(item->{
+//            item.deleteById();
+//            videoService.deleteAllInfoById(item.getId());
+//
+//        });
 //    }
 //}
