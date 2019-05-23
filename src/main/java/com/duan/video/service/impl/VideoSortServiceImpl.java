@@ -122,7 +122,7 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
     public boolean updateAllSort() {
         updateByType(Constants.MOVIE_HOT, 1);
         updateByType(Constants.MOVIE_TOP250, 1);
-        updateByType(Constants.MOVIE_COMING, 1);
+        updateByType(Constants.MV_HOT, 1);
         return true;
     }
 

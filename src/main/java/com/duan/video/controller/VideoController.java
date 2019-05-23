@@ -164,7 +164,6 @@ public class VideoController {
      * 定时：每天早上11点执行
      * @return
      */
-    @Scheduled(cron = "0 0 11 * * ?")
     @ApiOperation("更新热映电影")
     @GetMapping("sort/hot")
     public boolean updateHotSort(){
@@ -176,7 +175,6 @@ public class VideoController {
      * 定时：每天早上11点5分执行
      * @return
      */
-    @Scheduled(cron = "0 5 11 * * ?")
     @ApiOperation("更新top250电影")
     @GetMapping("sort/top250")
     public boolean updateTop250Sort(){
@@ -188,7 +186,6 @@ public class VideoController {
      * 定时：每天早上11点5分执行
      * @return
      */
-    @Scheduled(cron = "0 10 11 * * ?")
     @ApiOperation("更新top250电影")
     @GetMapping("sort/mvhot")
     public boolean updateMVHotSort(){
@@ -212,7 +209,7 @@ public class VideoController {
      */
     @ApiOperation("更新所有电影排序")
     @GetMapping("sort/all")
-
+    @Scheduled(cron = "0 0 7 * * ?")
     public boolean updateAllSort(){
         return videoSortService.updateAllSort();
     }
