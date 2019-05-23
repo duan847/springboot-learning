@@ -128,35 +128,14 @@ public class VideoController {
     }
 
     /**
-     * 分页查询热映视频
+     * 根据类型分页查询视频
      *
      * @return
      */
-    @ApiOperation("分页查询热映视频")
-    @GetMapping("/hot/page")
-    public IPage<VideoDetailVO> selectHotPage(@RequestParam Map<String, Object> params) {
-        return videoService.selectHotPage(new Query(params));
-    }
-
-    /**
-     * 分页查询热播电视剧
-     *
-     * @return
-     */
-    @ApiOperation("分页查询热播电视剧")
-    @GetMapping("/mvhot/page")
-    public IPage<VideoDetailVO> selectMVHotPage(@RequestParam Map<String, Object> params) {
-        return videoService.selectMVHotPage(new Query(params));
-    }
-    /**
-     * 分页查询视频排行榜
-     *
-     * @return
-     */
-    @ApiOperation("分页查询视频排行榜")
-    @GetMapping("/top/page")
-    public IPage<VideoDetailVO> selectTop250Page(@RequestParam Map<String, Object> params) {
-        return videoService.selectTop250Page(new Query(params));
+    @ApiOperation("根据类型分页查询视频")
+    @GetMapping("/sort/page")
+    public IPage<VideoDetailVO> selectSortPage(@RequestParam Map<String, Object> params) {
+        return videoService.selectSortPage(new Query(params));
     }
 
     /**

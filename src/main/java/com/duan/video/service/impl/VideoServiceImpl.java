@@ -212,14 +212,13 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     /**
-     * 分页查询热映视频
+     * 根据类型分页查询视频
      *
      * @param query 分页参数、条件
      * @return
      */
     @Override
-    public Page<VideoDetailVO> selectHotPage(Query query) {
-        query.getParams().put("type", Constants.MOVIE_HOT);
+    public Page<VideoDetailVO> selectSortPage(Query query) {
         return query.setRecords(videoMapper.selectSortPage(query));
     }
 
@@ -402,18 +401,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     /**
-     * 分页查询视频排行榜
-     *
-     * @param query
-     * @return
-     */
-    @Override
-    public IPage<VideoDetailVO> selectTop250Page(Query query) {
-        query.getParams().put("type", Constants.MOVIE_TOP250);
-        return query.setRecords(videoMapper.selectSortPage(query));
-    }
-
-    /**
      * 根据id更新视频所有信息
      *
      * @param id
@@ -532,17 +519,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
         } while (true);
         return true;
-    }
-
-    /**
-     * 分页查询热播电视剧
-     * @param query
-     * @return
-     */
-    @Override
-    public IPage<VideoDetailVO> selectMVHotPage(Query query) {
-        query.getParams().put("type", Constants.MV_HOT);
-        return query.setRecords(videoMapper.selectSortPage(query));
     }
 
     /**

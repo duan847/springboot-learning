@@ -64,12 +64,11 @@ public interface VideoService extends IService<Video> {
     Page<VideoDetailVO> selectDetailPage(Query query);
 
     /**
-     * 分页查询热映视频
-     *
-     * @param query 分页参数、条件
+     * 根据类型分页查询视频
+     * @param query
      * @return
      */
-    Page<VideoDetailVO> selectHotPage(Query query);
+    Page<VideoDetailVO> selectSortPage(Query query);
 
     /**
      * 根据id查看视频详细
@@ -79,13 +78,6 @@ public interface VideoService extends IService<Video> {
     VideoDetailVO getDetailById(Long id);
 
     void startByDoubanId(Integer id);
-
-    /**
-     * 分页查询视频排行榜
-     * @param query
-     * @return
-     */
-    IPage<VideoDetailVO> selectTop250Page(Query query);
 
     /**
      * 根据id更新视频所有信息
@@ -113,11 +105,4 @@ public interface VideoService extends IService<Video> {
      * @return
      */
     boolean updateByIncompletion();
-
-    /**
-     * 分页查询热播电视剧
-     * @param query
-     * @return
-     */
-    IPage<VideoDetailVO> selectMVHotPage(Query query);
 }
