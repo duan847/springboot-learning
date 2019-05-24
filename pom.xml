@@ -20,6 +20,7 @@
         <fastjson.version>1.2.57</fastjson.version>
         <hutool-version>4.5.6</hutool-version>
         <swagger.version>2.9.2</swagger.version>
+        <jasypt.version>2.1.1</jasypt.version>
     </properties>
 
     <dependencies>
@@ -104,6 +105,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.github.ulisesbocchio/jasypt-spring-boot-starter -->
+        <dependency>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+            <version>${jasypt.version}</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

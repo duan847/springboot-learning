@@ -87,7 +87,6 @@
 //    public void selectHotPage() {
 //        Map map = new HashMap<>();
 //        map.put("size",10);
-//        videoService.selectHotPage(new Query(map));
 //    }
 //
 //    @Test
