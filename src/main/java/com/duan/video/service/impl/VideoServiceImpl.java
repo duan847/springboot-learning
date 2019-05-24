@@ -476,7 +476,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 0 1/2 * * ?")
+    @Scheduled(cron = "0 0 1/1 * * ?")
     public boolean updateByIncompletion() {
         Integer size = 30;
         Integer current = 0;
@@ -513,7 +513,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                     Long videoId = video.getId();
                     this.updateAllInfoById(videoId);
                     incompletionService.deleteByVideoId(videoId);
-                    log.info(Constants.INCOMPLETION_UPDATE_MSG, no, thisVideoRemarks, newRemarks);
+                    log.info(Constants.INCOMPLETION_UPDATE_MSG, no,video.getName(), thisVideoRemarks, newRemarks);
                 }
             });
 

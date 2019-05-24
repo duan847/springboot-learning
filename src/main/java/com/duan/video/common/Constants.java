@@ -102,5 +102,5 @@ public class Constants {
     /**
      * 待完结视频更新完成的消息
      */
-    public static final String INCOMPLETION_UPDATE_MSG = "待完结视频更新：编号：{}，更新前remarks：{}，更新后remarks：{}";
+    public static final String INCOMPLETION_UPDATE_MSG = "待完结视频更新：编号：{}，视频名：{}，更新前remarks：{}，更新后remarks：{}";
 }
