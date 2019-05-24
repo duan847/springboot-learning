@@ -65,7 +65,7 @@ public class Constants {
      */
     public static final int MOVIE_COMING = 130;
     /**
-     * 热门电视剧
+     * 热播电视剧
      */
     public static final int MV_HOT = 131;
 
@@ -73,6 +73,10 @@ public class Constants {
      * 最近热门电影
      */
     public static final int MOVIE_RECENT_HOT = 132;
+    /**
+     * 热播综艺
+     */
+    public static final int VARIETY_SHOW_HOT = 133;
     /**
      * 爬取最新的视频开始的消息
      */
