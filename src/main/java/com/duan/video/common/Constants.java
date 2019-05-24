@@ -68,6 +68,11 @@ public class Constants {
      * 热门电视剧
      */
     public static final int MV_HOT = 131;
+
+    /**
+     * 最近热门电影
+     */
+    public static final int MOVIE_RECENT_HOT = 132;
     /**
      * 爬取最新的视频开始的消息
      */

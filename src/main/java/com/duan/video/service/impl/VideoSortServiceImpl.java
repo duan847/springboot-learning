@@ -63,6 +63,11 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
                 typeName = "热门电视剧";
                 flag = false;
                 break;
+            case Constants.MOVIE_RECENT_HOT:
+                url = "https://movie.douban.com/j/search_subjects?type=movie&tag=%E7%83%AD%E9%97%A8&page_limit=50&page_start=0";
+                typeName = "最近热门电影";
+                flag = false;
+                break;
         }
         log.info("{}，开始更新", typeName);
         Integer count = 100;
@@ -123,6 +128,7 @@ public class VideoSortServiceImpl extends ServiceImpl<VideoSortMapper, VideoSort
         updateByType(Constants.MOVIE_HOT, 1);
         updateByType(Constants.MOVIE_TOP250, 1);
         updateByType(Constants.MV_HOT, 1);
+        updateByType(Constants.MOVIE_RECENT_HOT, 1);
         return true;
     }
 
