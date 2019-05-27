@@ -1,5 +1,6 @@
 package com.duan.video.controller;
 
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -38,6 +39,8 @@ public class VideoController {
     private VideoSortService videoSortService;
     @Autowired
     private CrawErrorService crawErrorService;
+    @Autowired
+    private IncompletionService incompletionService;
     /**
      * 爬取视频，使用多线程爬取，线程配置见
      *
@@ -235,8 +238,23 @@ public class VideoController {
      */
     @ApiOperation("更新待完结视频")
     @GetMapping("incompletion")
+    @Scheduled(cron = "0 0 1/1 * * ?")
     public boolean updateByIncompletion(){
-        return videoService.updateByIncompletion();
+        Integer size = 30;
+        Integer current = 0;
+        int count = incompletionService.count(new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth()));
+        log.info(Constants.UPDATE_INCOMPLETION_START_MSG, count, DateUtil.now());
+        do {
+            IPage<Incompletion> page = incompletionService.page(new Page<>(current, size),  new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth()));
+            List<Incompletion> incompletionList = page.getRecords();
+            if (incompletionList.size() == 0) {
+                log.info(Constants.UPDATE_INCOMPLETION_END_MSG);
+                break;
+            }
+            current += 1;
+            videoService.updateByIncompletionList(incompletionList);
+        }while (true);
+        return true;
     }
 
     /**

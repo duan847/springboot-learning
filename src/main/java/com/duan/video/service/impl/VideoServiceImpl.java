@@ -3,7 +3,6 @@ package com.duan.video.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -472,38 +471,25 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
      * 条件：待完结的更新时间小于一个月
      * 待完结的remarks和现在视频的remarks不相等
      *
-     * @return
+     * @param incompletionList
      */
     @Override
+    @Async
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 0 1/1 * * ?")
-    public boolean updateByIncompletion() {
-        Integer size = 30;
-        Integer current = 0;
-        int count = incompletionService.count(new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth()));
-        log.info(Constants.UPDATE_INCOMPLETION_START_MSG, count, DateUtil.now());
-        do {
-            IPage<Incompletion> page = incompletionService.page(new Page<>(current, size),  new QueryWrapper<Incompletion>().lambda().gt(Incompletion::getUpdateTime, DateUtil.lastMonth()));
-            List<Incompletion> incompletionList = page.getRecords();
-            if (incompletionList.size() == 0) {
-                log.info(Constants.UPDATE_INCOMPLETION_END_MSG);
-                break;
+    public void updateByIncompletionList(List<Incompletion> incompletionList) {
+        List<Long> videoIds = new ArrayList<>();
+        //找出需要更新的待完结视频
+        incompletionList.forEach(item -> {
+            Long videoId = item.getVideoId();
+            if (null != videoId) {
+                videoIds.add(videoId);
             }
-            current += 1;
-            List<Long> videoIds = new ArrayList<>();
-            //找出需要更新的待完结视频
-            incompletionList.forEach(item -> {
-                Long videoId = item.getVideoId();
-                if (null != videoId) {
-                    videoIds.add(videoId);
-                }
-            });
-            //待完结视频存在于视频中，则更新待完结视频
-            List<Video> videoList = videoMapper.selectBatchIds(videoIds);
-            if (videoList.size() == 0) {
-                log.info(Constants.UPDATE_INCOMPLETION_END_MSG);
-                break;
-            }
+        });
+        //待完结视频存在于视频中，则更新待完结视频
+        List<Video> videoList = videoMapper.selectBatchIds(videoIds);
+        if (videoList.size() == 0) {
+            log.info(Constants.UPDATE_INCOMPLETION_END_MSG);
+        } else {
             videoList.forEach(video -> {
                 String thisVideoRemarks = video.getRemarks();
                 Integer no = video.getNo();
@@ -511,14 +497,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                 //如果现在视频的remarks和获取到的remarks不一样，更新视频
                 if (StrUtil.isNotEmpty(thisVideoRemarks) && newRemarks != null && !StrUtil.equals(thisVideoRemarks, newRemarks)) {
                     Long videoId = video.getId();
-                    this.updateAllInfoById(videoId);
                     incompletionService.deleteByVideoId(videoId);
-                    log.info(Constants.INCOMPLETION_UPDATE_MSG, no,video.getName(), thisVideoRemarks, newRemarks);
+                    this.updateAllInfoById(videoId);
+                    log.info(Constants.INCOMPLETION_UPDATE_MSG, no, video.getName(), thisVideoRemarks, newRemarks);
                 }
             });
-
-        } while (true);
-        return true;
+        }
     }
 
     /**
