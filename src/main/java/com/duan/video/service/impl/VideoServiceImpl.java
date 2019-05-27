@@ -474,7 +474,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
      * @param incompletionList
      */
     @Override
-    @Async
     @Transactional(rollbackFor = Exception.class)
     public void updateByIncompletionList(List<Incompletion> incompletionList) {
         List<Long> videoIds = new ArrayList<>();

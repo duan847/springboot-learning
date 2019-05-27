@@ -43,3 +43,8 @@ spring:
 ## 开启定时任务
 scheduling:
   enabled: true
+
+## 日志输出，不配置不会输出sql日志
+logging:
+  level:
+    com.duan.video: debug
