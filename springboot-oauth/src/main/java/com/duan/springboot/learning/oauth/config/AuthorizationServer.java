@@ -1,5 +1,6 @@
 package com.duan.springboot.learning.oauth.config;
 
+import com.duan.springboot.learning.oauth.handler.AuthenticationFailHandler;
 import com.duan.springboot.learning.oauth.service.impl.UserDetailsServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,7 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
                 .authenticationManager(authenticationManager)
                 //刷新token后，原先的refresh_token失效
                 .reuseRefreshTokens(true).userDetailsService(userDetailsService);
+        endpoints.exceptionTranslator(new AuthenticationFailHandler());
     }
 
     /**

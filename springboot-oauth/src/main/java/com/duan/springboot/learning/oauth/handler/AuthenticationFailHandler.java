@@ -1,27 +1,27 @@
 package com.duan.springboot.learning.oauth.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.stereotype.Component;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 
 /**
- *
  * 自定义认证失败的处理器
  *
  * @author duanjw
  */
-@Component
 @Slf4j
-public class AuthenticationFailHandler extends SimpleUrlAuthenticationFailureHandler {
+public class AuthenticationFailHandler implements WebResponseExceptionTranslator {
+
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.error("登录失败：{}", exception);
-        super.onAuthenticationFailure(request, response, exception);
+    public ResponseEntity<OAuth2Exception> translate(Exception e) {
+        Throwable throwable = e.getCause();
+        log.error("oauth异常", e);
+        if (throwable instanceof InvalidTokenException) {
+            log.info("token过期");
+        }
+        return new ResponseEntity("token过期", HttpStatus.OK);
     }
 }

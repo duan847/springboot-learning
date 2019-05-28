@@ -34,7 +34,7 @@ public class OauthApplicationTest {
         //get
         ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:8080/show", String.class);
         //状态码是否为401
-        assertThat(responseEntity.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
 
         log.info("没有登录直接访问受保护的资源，返回内容：{}", responseEntity.getBody());
     }

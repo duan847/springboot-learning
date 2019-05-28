@@ -21,9 +21,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    private AuthenticationFailHandler authenticationFailHandler;
-
 
     @Bean
     @Override
