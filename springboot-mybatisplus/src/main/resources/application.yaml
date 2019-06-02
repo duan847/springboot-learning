@@ -8,22 +8,6 @@
 #    username: root
 #    password: test
 
-spring:
-  ## 数据源
-  datasource:
-    ## mysql链接驱动，可不配置。默认从引入的pom中找
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: video
-    password: Video123
-    ## 批量更新sql需要设置&allowMultiQueries=true
-    url: jdbc:mysql://rm-wz9bkwv69su8u0hl3bo.mysql.rds.aliyuncs.com:3306/video?characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true
-    ## 连接池，可不配置。2.x默认使用该连接池
-    type: com.zaxxer.hikari.HikariDataSource
-
-## mybatiplus配置
-mybatis-plus:
-  mapper-locations: classpath:/mapper/*Mapper.xml
-  typeAliasesPackage: com.duan.springboot.learning.mybatisplus.pojo.entity
 
 # 日志输出，不配置不会输出sql日志
 logging:

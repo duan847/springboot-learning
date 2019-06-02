@@ -52,7 +52,7 @@ public class CodeGenerator {
      * RUN THIS
      */
     public static void main(String[] args) {
-        String parent = "com.duan.springboot.learning.mybatisplus.text";
+        String parent = "com.duan.springboot.learning.mybatisplus";
         String author = "duanjw";
         String dbUrl = "jdbc:mysql://rm-wz9bkwv69su8u0hl3bo.mysql.rds.aliyuncs.com:3306/video?characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true";
         String dbUsername = "video";
@@ -72,7 +72,6 @@ public class CodeGenerator {
         gc.setActiveRecord(true);
         mpg.setGlobalConfig(gc);
 
-
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setUrl(dbUrl);
@@ -88,7 +87,6 @@ public class CodeGenerator {
         pc.setParent(parent);
         pc.setEntity("pojo.entity");
         mpg.setPackageInfo(pc);
-
         // 自定义配置
         InjectionConfig cfg = new InjectionConfig() {
             @Override
@@ -106,6 +104,19 @@ public class CodeGenerator {
                 return projectPath + "/springboot-mybatisplus/src/main/resources/mapper/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });
+
+
+        //        //xml输出路径
+        focList.add(new FileOutConfig("/template/controller.java.ftl") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                // 自定义输入文件名称
+                return gc.getOutputDir() + "/" + pc.getParent().replace(".", "/") + "/" + pc.getController() + "/" + tableInfo.getEntityName() + "Controller" + StringPool.DOT_JAVA;
+            }
+        });
+        cfg.setFileOutConfigList(focList);
+        mpg.setCfg(cfg);
+        mpg.setTemplate(new TemplateConfig().setXml(null).setController(null));
         cfg.setFileOutConfigList(focList);
         mpg.setCfg(cfg);
         mpg.setTemplate(new TemplateConfig().setXml(null));
@@ -121,6 +132,8 @@ public class CodeGenerator {
 //        strategy.setSuperEntityColumns("id");
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
+        strategy.setRestControllerStyle(true);
+        strategy.setEntityTableFieldAnnotationEnable(true);
         mpg.setStrategy(strategy);
         // 选择 freemarker 引擎需要指定如下加，注意 pom 依赖必须有！
         mpg.setTemplateEngine(new FreemarkerTemplateEngine());
