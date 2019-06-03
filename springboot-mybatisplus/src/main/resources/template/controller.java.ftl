@@ -67,11 +67,11 @@ public class ${table.controllerName} {
     }
 
     /**
-    * 分页查询${table.comment}
-    *
-    * @param params 分页对象
-    * @return 分页对象
-    */
+     * 分页查询${table.comment}
+     *
+     * @param params 分页对象
+     * @return 分页对象
+     */
     @GetMapping("/page")
     public IPage page(@RequestParam Map<String, Object> params) {
         return ${table.entityPath}Service.page(new Query(params));

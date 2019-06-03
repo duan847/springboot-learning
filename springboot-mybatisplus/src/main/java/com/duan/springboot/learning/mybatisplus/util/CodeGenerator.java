@@ -106,7 +106,7 @@ public class CodeGenerator {
         });
 
 
-        //        //xml输出路径
+        //controller输出路径
         focList.add(new FileOutConfig("/template/controller.java.ftl") {
             @Override
             public String outputFile(TableInfo tableInfo) {
@@ -114,6 +114,32 @@ public class CodeGenerator {
                 return gc.getOutputDir() + "/" + pc.getParent().replace(".", "/") + "/" + pc.getController() + "/" + tableInfo.getEntityName() + "Controller" + StringPool.DOT_JAVA;
             }
         });
+
+        //service输出路径
+        focList.add(new FileOutConfig("/template/service.java.ftl") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                // 自定义输入文件名称
+                return gc.getOutputDir() + "/" + pc.getParent().replace(".", "/") + "/" + pc.getService() + "/" + tableInfo.getEntityName() + "Service" + StringPool.DOT_JAVA;
+            }
+        });
+        //serviceImpl输出路径
+        focList.add(new FileOutConfig("/template/serviceImpl.java.ftl") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                // 自定义输入文件名称
+                return gc.getOutputDir() + "/" + pc.getParent().replace(".", "/") + "/" + pc.getServiceImpl() + "/" + tableInfo.getEntityName() + "ServiceImpl" + StringPool.DOT_JAVA;
+            }
+        });
+        //mapper输出路径
+        focList.add(new FileOutConfig("/template/mapper.java.ftl") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                // 自定义输入文件名称
+                return gc.getOutputDir() + "/" + pc.getParent().replace(".", "/") + "/" + pc.getMapper() + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_JAVA;
+            }
+        });
+
         cfg.setFileOutConfigList(focList);
         mpg.setCfg(cfg);
         mpg.setTemplate(new TemplateConfig().setXml(null).setController(null));
