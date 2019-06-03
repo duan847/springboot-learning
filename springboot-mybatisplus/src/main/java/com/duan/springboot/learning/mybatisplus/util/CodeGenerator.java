@@ -52,6 +52,12 @@ public class CodeGenerator {
      * RUN THIS
      */
     public static void main(String[] args) {
+        String parent = "com.duan.springboot.learning.mybatisplus";
+        String author = "duanjw";
+        String dbUrl = "jdbc:mysql://rm-wz9bkwv69su8u0hl3bo.mysql.rds.aliyuncs.com:3306/video?characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true";
+        String dbUsername = "video";
+        String dbPassword = "Video123";
+
         // 代码生成器
         AutoGenerator mpg = new AutoGenerator();
 
@@ -59,25 +65,28 @@ public class CodeGenerator {
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
         gc.setOutputDir(projectPath + "/springboot-mybatisplus/src/main/java");
-        gc.setAuthor("duanjw");
+        gc.setAuthor(author);
         gc.setOpen(false);
+        //设置service接口名字为*Service
+        gc.setServiceName("%sService");
+        gc.setActiveRecord(true);
         mpg.setGlobalConfig(gc);
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://39.106.164.245:3306/video?characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai");
+        dsc.setUrl(dbUrl);
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
-        dsc.setUsername("root");
-        dsc.setPassword("123456");
+        dsc.setUsername(dbUsername);
+        dsc.setPassword(dbPassword);
         mpg.setDataSource(dsc);
 
         // 包配置
         PackageConfig pc = new PackageConfig();
 //        pc.setModuleName(scanner("模块名"));
-        pc.setParent("com.duan.springboot.learning");
+        pc.setParent(parent);
+        pc.setEntity("pojo.entity");
         mpg.setPackageInfo(pc);
-
         // 自定义配置
         InjectionConfig cfg = new InjectionConfig() {
             @Override
@@ -85,18 +94,32 @@ public class CodeGenerator {
                 // to do nothing
             }
         };
-//        List<FileOutConfig> focList = new ArrayList<>();
-//        focList.add(new FileOutConfig("/templates/mapper.xml.ftl") {
-//            @Override
-//            public String outputFile(TableInfo tableInfo) {
-//                // 自定义输入文件名称
-//                return projectPath + "/springboot-mybatisplus/src/main/resources/mapper/" + pc.getModuleName()
-//                        + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
-//            }
-//        });
-//        cfg.setFileOutConfigList(focList);
+        List<FileOutConfig> focList = new ArrayList<>();
+
+        //xml输出路径
+        focList.add(new FileOutConfig("/templates/mapper.xml.ftl") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                // 自定义输入文件名称
+                return projectPath + "/springboot-mybatisplus/src/main/resources/mapper/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+            }
+        });
+
+
+        //        //xml输出路径
+        focList.add(new FileOutConfig("/template/controller.java.ftl") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                // 自定义输入文件名称
+                return gc.getOutputDir() + "/" + pc.getParent().replace(".", "/") + "/" + pc.getController() + "/" + tableInfo.getEntityName() + "Controller" + StringPool.DOT_JAVA;
+            }
+        });
+        cfg.setFileOutConfigList(focList);
         mpg.setCfg(cfg);
-//        mpg.setTemplate(new TemplateConfig().setXml(null));
+        mpg.setTemplate(new TemplateConfig().setXml(null).setController(null));
+        cfg.setFileOutConfigList(focList);
+        mpg.setCfg(cfg);
+        mpg.setTemplate(new TemplateConfig().setXml(null));
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
@@ -106,9 +129,11 @@ public class CodeGenerator {
         strategy.setEntityLombokModel(true);
 //        strategy.setSuperControllerClass("com.baomidou.mybatisplus.samples.generator.common.BaseController");
         strategy.setInclude(scanner("表名"));
-        strategy.setSuperEntityColumns("id");
+//        strategy.setSuperEntityColumns("id");
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
+        strategy.setRestControllerStyle(true);
+        strategy.setEntityTableFieldAnnotationEnable(true);
         mpg.setStrategy(strategy);
         // 选择 freemarker 引擎需要指定如下加，注意 pom 依赖必须有！
         mpg.setTemplateEngine(new FreemarkerTemplateEngine());
