@@ -35,7 +35,7 @@ public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.m
      * @return
      */
     @Override
-    public IPage<${entity}> page(Query<${entity}> query) {
+    public IPage<${entity}> selectPage(Query<${entity}> query) {
       return query.setRecords(${table.entityPath}Mapper.selectPage(query));
     }
 

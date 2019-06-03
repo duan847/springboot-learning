@@ -24,7 +24,7 @@ public interface ${table.mapperName} extends ${superMapperClass}<${entity}> {
      * @param query 分页对象
      * @return List数组
      */
-    List<${entity}> selectPage(Query<${entity}> query);
+    List<${entity}> selectPage(Query query);
 
 }
 </#if>

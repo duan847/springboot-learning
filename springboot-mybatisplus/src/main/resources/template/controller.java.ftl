@@ -74,7 +74,7 @@ public class ${table.controllerName} {
      */
     @GetMapping("/page")
     public IPage page(@RequestParam Map<String, Object> params) {
-        return ${table.entityPath}Service.page(new Query(params));
+        return ${table.entityPath}Service.selectPage(new Query(params));
     }
 
     /**

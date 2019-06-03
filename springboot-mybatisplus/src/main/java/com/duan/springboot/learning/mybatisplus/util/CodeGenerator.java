@@ -97,7 +97,7 @@ public class CodeGenerator {
         List<FileOutConfig> focList = new ArrayList<>();
 
         //xml输出路径
-        focList.add(new FileOutConfig("/templates/mapper.xml.ftl") {
+        focList.add(new FileOutConfig("/template/mapper.xml.ftl") {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输入文件名称
@@ -128,7 +128,7 @@ public class CodeGenerator {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输入文件名称
-                return gc.getOutputDir() + "/" + pc.getParent().replace(".", "/") + "/" + pc.getServiceImpl() + "/" + tableInfo.getEntityName() + "ServiceImpl" + StringPool.DOT_JAVA;
+                return gc.getOutputDir() + "/" + pc.getParent().replace(".", "/") + "/" + pc.getServiceImpl().replace(".", "/") + "/" + tableInfo.getEntityName() + "ServiceImpl" + StringPool.DOT_JAVA;
             }
         });
         //mapper输出路径
@@ -153,7 +153,8 @@ public class CodeGenerator {
 //        strategy.setSuperEntityClass("com.baomidou.mybatisplus.samples.generator.common.BaseEntity");
         strategy.setEntityLombokModel(true);
 //        strategy.setSuperControllerClass("com.baomidou.mybatisplus.samples.generator.common.BaseController");
-        strategy.setInclude(scanner("表名"));
+//        strategy.setInclude(scanner("表名"));
+        strategy.setInclude("video");
 //        strategy.setSuperEntityColumns("id");
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");

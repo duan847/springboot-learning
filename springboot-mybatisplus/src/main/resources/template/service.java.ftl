@@ -24,7 +24,7 @@ public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
      * @param query 分页对象
      * @return 分页对象
      */
-    IPage<Video> page(Query<Video> query);
+    IPage<Video> selectPage(Query<Video> query);
 
 }
 </#if>
