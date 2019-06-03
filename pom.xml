@@ -28,6 +28,7 @@
         <module>amqp</module>
         <module>datajpa</module>
         <module>elasticsearch</module>
+        <module>common</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
