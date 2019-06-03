@@ -62,7 +62,7 @@ public class ${table.controllerName} {
      * @return ${entity}
      */
     @GetMapping("/{id}")
-    public R<${entity}> getById(@PathVariable String id) {
+    public R<${entity}> getById(@PathVariable Long id) {
         return R.ok(${table.entityPath}Service.getById(id));
     }
 
@@ -83,7 +83,7 @@ public class ${table.controllerName} {
      * @return success/false
      */
     @DeleteMapping("/{id}")
-    public R<Boolean> removeById(@PathVariable String id) {
+    public R<Boolean> removeById(@PathVariable Long id) {
        return R.ok(${table.entityPath}Service.removeById(id));
     }
 

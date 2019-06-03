@@ -2,8 +2,8 @@
 #spring:
 #  datasource:
 #    driver-class-name: org.h2.Driver
-#    schema: classpath:db/schema-h2.sql
-#    data: classpath:db/data-h2.sql
+#    schema: classpath:db/schema.sql
+#    data: classpath:db/data.sql
 #    url: jdbc:h2:mem:test
 #    username: root
 #    password: test
@@ -19,6 +19,9 @@ spring:
     url: jdbc:mysql://rm-wz9bkwv69su8u0hl3bo.mysql.rds.aliyuncs.com:3306/video?characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true
     ## 连接池，可不配置。2.x默认使用该连接池
     type: com.zaxxer.hikari.HikariDataSource
+    schema: classpath:db/schema.sql
+    data: classpath:db/data.sql
+#    initialization-mode: always
 
 ## mybatiplus配置
 mybatis-plus:

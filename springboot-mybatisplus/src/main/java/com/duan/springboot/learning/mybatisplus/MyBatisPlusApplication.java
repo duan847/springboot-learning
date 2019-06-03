@@ -5,13 +5,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  *
- * mybatisplus 启动类，此类无需启动，直接运行junit测试类即可
+ * mybatisplus 启动类
  *
- * 使用mybatisplus + h2数据库，初始化表结构和数据在resources/db/
+ * 使用mybatisplus + mysql数据库，初始化表结构和数据在resources/db/
  *
  *
  * @author duanjw
- * @data 2019/04/23
+ * @since 2019/04/23
  */
 @SpringBootApplication
 public class MyBatisPlusApplication {
