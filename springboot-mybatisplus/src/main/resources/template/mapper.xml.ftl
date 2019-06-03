@@ -36,14 +36,13 @@
     </sql>
 
 </#if>
-
     <!-- 分页查询${table.comment} -->
     <select id="selectPage" resultType="${package.Entity}.${entity}">
         select * from ${entity}
         <trim prefix="where" prefixOverrides="AND">
             <if test="params.name != null and '' != params.name">
                 <bind name="name_like" value="'%' + params.name + '%'" />
-                AND name like #{name_like}
+                AND name LIKE <#noparse>#{</#noparse>name_like}
             </if>
         </trim>
     </select>

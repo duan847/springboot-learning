@@ -153,8 +153,8 @@ public class CodeGenerator {
 //        strategy.setSuperEntityClass("com.baomidou.mybatisplus.samples.generator.common.BaseEntity");
         strategy.setEntityLombokModel(true);
 //        strategy.setSuperControllerClass("com.baomidou.mybatisplus.samples.generator.common.BaseController");
-//        strategy.setInclude(scanner("表名"));
-        strategy.setInclude("video");
+        strategy.setInclude(scanner("表名"));
+//        strategy.setInclude("video");
 //        strategy.setSuperEntityColumns("id");
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
