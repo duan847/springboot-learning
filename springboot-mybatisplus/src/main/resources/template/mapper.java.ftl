@@ -1,6 +1,7 @@
 package ${package.Mapper};
 
 import ${package.Entity}.${entity};
+import com.duan.springboot.learning.mybatisplus.common.Query;
 import ${superMapperClassPackage};
 
 import java.util.List;
@@ -23,7 +24,7 @@ public interface ${table.mapperName} extends ${superMapperClass}<${entity}> {
      * @param query 分页对象
      * @return List数组
      */
-    List<${entity}> page(Query<${entity}> query);
+    List<${entity}> selectPage(Query<${entity}> query);
 
 }
 </#if>
