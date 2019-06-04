@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.duan.springboot.learning.mybatisplus.mapper.TeacherMapper">
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultType="com.duan.springboot.learning.mybatisplus.pojo.entity.Teacher">
+        select * from Teacher
+        <trim prefix="where" prefixOverrides="AND">
+            <if test="params.name != null and '' != params.name">
+                <bind name="name_like" value="'%' + params.name + '%'" />
+                AND name LIKE #{name_like}
+            </if>
+        </trim>
+    </select>
+
+</mapper>
