@@ -1,6 +1,6 @@
 package ${package.Controller};
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.duan.springboot.learning.mybatisplus.common.Query;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,7 +73,7 @@ public class ${table.controllerName} {
      * @return 分页对象
      */
     @GetMapping("/page")
-    public IPage page(@RequestParam Map<String, Object> params) {
+    public Page page(@RequestParam Map<String, Object> params) {
         return ${table.entityPath}Service.selectPage(new Query(params));
     }
 

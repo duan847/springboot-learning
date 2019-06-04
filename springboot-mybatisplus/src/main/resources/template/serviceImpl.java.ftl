@@ -3,7 +3,7 @@ package ${package.ServiceImpl};
 import ${package.Entity}.${entity};
 import ${package.Mapper}.${table.mapperName};
 import ${package.Service}.${table.serviceName};
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.duan.springboot.learning.mybatisplus.common.Query;
 import ${superServiceImplClassPackage};
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.m
      * @return
      */
     @Override
-    public IPage<${entity}> selectPage(Query<${entity}> query) {
+    public Page<${entity}> selectPage(Query<${entity}> query) {
       return query.setRecords(${table.entityPath}Mapper.selectPage(query));
     }
 

@@ -1,7 +1,7 @@
 package com.duan.springboot.learning.mybatisplus.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.duan.springboot.learning.mybatisplus.pojo.entity.Teacher;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.FixMethodOrder;
@@ -16,7 +16,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.beans.Transient;
 import java.util.Date;
 import java.util.List;
 
@@ -73,11 +72,11 @@ public class TeacherControllerTest {
      */
     @Test
     public void test03selectPage() {
-        ParameterizedTypeReference<IPage<Teacher>> type = new ParameterizedTypeReference<IPage<Teacher>>() {};
+        ParameterizedTypeReference<Page<Teacher>> type = new ParameterizedTypeReference<Page<Teacher>>() {};
         List<Teacher> teacherList = restTemplate.exchange("/teacher/page", HttpMethod.GET, null, type).getBody().getRecords();
         //老师list不为空
         assertThat(teacherList, notNullValue());
-        log.info("查询所有老师：{}", teacherList);
+        log.info("分页查询老师：{}", teacherList);
     }
 
     /**
@@ -88,6 +87,12 @@ public class TeacherControllerTest {
     public void test04updateById() {
         Teacher teacher = new Teacher(25L,"小老师",new Date());
         restTemplate.put("/teacher", teacher);
+        ParameterizedTypeReference<R<Teacher>> type = new ParameterizedTypeReference<R<Teacher>>() {};
+        //请求地址、返回对象的类型、url的变量按顺序赋值
+        teacher = restTemplate.exchange("/teacher/{id}", HttpMethod.GET, null, type, 25L).getBody().getData();
+        //老师姓名不为空，并且等于小老师
+        assertThat(teacher.getName(), allOf(notNullValue(),equalTo("小老师")));
+        log.info("根据id修改老师，修改后：{}" + teacher);
     }
 
     /**
@@ -96,7 +101,14 @@ public class TeacherControllerTest {
      */
     @Test
     public void test05delete() {
-        restTemplate.delete("/student/{id}",25L);
+        restTemplate.delete("/teacher/{id}",25L);
+
+        ParameterizedTypeReference<R<Teacher>> type = new ParameterizedTypeReference<R<Teacher>>() {};
+        //请求地址、返回对象的类型、url的变量按顺序赋值
+        Teacher teacher = restTemplate.exchange("/teacher/{id}", HttpMethod.GET, null, type, 25L).getBody().getData();
+        //老师为空
+        assertThat(teacher, nullValue());
+        log.info("根据id删除老师，删除后为该老师为空");
     }
 
 }

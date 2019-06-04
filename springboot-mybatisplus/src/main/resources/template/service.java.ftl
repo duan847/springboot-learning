@@ -1,7 +1,7 @@
 package ${package.Service};
 
 import ${package.Entity}.${entity};
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.duan.springboot.learning.mybatisplus.common.Query;
 import ${superServiceClassPackage};
 
@@ -24,7 +24,7 @@ public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
      * @param query 分页对象
      * @return 分页对象
      */
-    IPage<${entity}> selectPage(Query<${entity}> query);
+    Page<${entity}> selectPage(Query<${entity}> query);
 
 }
 </#if>

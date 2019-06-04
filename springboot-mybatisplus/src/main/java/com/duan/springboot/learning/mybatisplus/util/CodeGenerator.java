@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.samples.generator;
+package com.duan.springboot.learning.mybatisplus.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,10 @@ import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
+import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.rules.DateType;
+import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
@@ -70,6 +73,8 @@ public class CodeGenerator {
         //设置service接口名字为*Service
         gc.setServiceName("%sService");
         gc.setActiveRecord(true);
+        gc.setDateType(DateType.ONLY_DATE);
+
         mpg.setGlobalConfig(gc);
 
         // 数据源配置
