@@ -11,10 +11,8 @@
         <module>springboot-mysql</module>
         <module>springboot-redis</module>
         <module>springboot-email</module>
-        <module>springboot-docker</module>
         <module>springboot-oauth</module>
         <module>springboot-data-jpa</module>
-        <module>springboot-validator</module>
         <module>springboot-swagger-ui</module>
         <module>springboot-fastdfs</module>
         <module>springboot-lombok</module>
@@ -29,6 +27,8 @@
         <module>datajpa</module>
         <module>elasticsearch</module>
         <module>common</module>
+        <module>docker</module>
+        <module>validator</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

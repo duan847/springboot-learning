@@ -12,6 +12,11 @@ import java.util.regex.Pattern;
  */
 public class RegexUtils {
 
+    public static final String emailRegex = "\\w+@\\w+\\.[a-z]+(\\.[a-z]+)?";
+    public static final String idCardRegex = "[1-9]\\d{16}[a-zA-Z0-9]{1}";
+    public static final String mobileRegex = "(\\+\\d+)?1[3458]\\d{9}$";
+    public static final String phoneRegex = "(\\+\\d+)?(\\d{3,4}\\-?)?\\d{7,8}$";
+    public static final String digitRegex = "\\-?[1-9]\\d+";
     /**
      * 验证Email
      *
@@ -19,8 +24,7 @@ public class RegexUtils {
      * @return 验证成功返回true，验证失败返回false
      */
     public static boolean isEmail(String email) {
-        String regex = "\\w+@\\w+\\.[a-z]+(\\.[a-z]+)?";
-        return Pattern.matches(regex, email);
+        return Pattern.matches(emailRegex, email);
     }
 
     /**
@@ -30,8 +34,7 @@ public class RegexUtils {
      * @return 验证成功返回true，验证失败返回false
      */
     public static boolean isIdCard(String idCard) {
-        String regex = "[1-9]\\d{16}[a-zA-Z0-9]{1}";
-        return Pattern.matches(regex, idCard);
+        return Pattern.matches(idCardRegex, idCard);
     }
 
     /**
@@ -45,8 +48,7 @@ public class RegexUtils {
      * @return 验证成功返回true，验证失败返回false
      */
     public static boolean isMobile(String mobile) {
-        String regex = "(\\+\\d+)?1[3458]\\d{9}$";
-        return Pattern.matches(regex, mobile);
+        return Pattern.matches(mobileRegex, mobile);
     }
 
     /**
@@ -61,8 +63,7 @@ public class RegexUtils {
      * @return 验证成功返回true，验证失败返回false
      */
     public static boolean isPhone(String phone) {
-        String regex = "(\\+\\d+)?(\\d{3,4}\\-?)?\\d{7,8}$";
-        return Pattern.matches(regex, phone);
+        return Pattern.matches(phoneRegex, phone);
     }
 
     /**
@@ -72,8 +73,7 @@ public class RegexUtils {
      * @return 验证成功返回true，验证失败返回false
      */
     public static boolean isDigit(String digit) {
-        String regex = "\\-?[1-9]\\d+";
-        return Pattern.matches(regex, digit);
+        return Pattern.matches(digitRegex, digit);
     }
 
     /**
