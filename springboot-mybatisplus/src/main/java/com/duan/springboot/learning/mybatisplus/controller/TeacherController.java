@@ -1,7 +1,7 @@
 package com.duan.springboot.learning.mybatisplus.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.api.R;
+import com.duan.springboot.learning.common.R;
 import com.duan.springboot.learning.mybatisplus.common.Query;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -12,6 +12,7 @@ import com.duan.springboot.learning.mybatisplus.pojo.entity.Teacher;
 import com.duan.springboot.learning.mybatisplus.service.TeacherService;
 
 import java.util.Map;
+
 /**
  * <p>
  *  前端控制器

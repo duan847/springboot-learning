@@ -1,5 +1,8 @@
 package com.duan.springboot.learning.common;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 
 /**
@@ -8,71 +11,65 @@ import java.io.Serializable;
  * @param <T>
  * @author duanjw
  */
+@Data
+@Accessors(chain = true)
 public class R<T> implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    public static final Integer SUCCESS = 0;
+    public static final Integer FAILED = 1;
 
-    public static final int NO_LOGIN = -1;
 
-    public static final int SUCCESS = 0;
-
-    public static final int FAIL = 1;
-
-    public static final int NO_PERMISSION = 2;
-
-    private String msg = "success";
-
-    private int code = SUCCESS;
-
+    /**
+     * 业务错误码
+     */
+    private Integer code;
+    /**
+     * 结果集
+     */
     private T data;
+    /**
+     * 描述
+     */
+    private String msg;
 
     public R() {
-        super();
+        // to do nothing
     }
 
-    public R(T data) {
-        super();
-        this.data = data;
+    public R(ICodeMessage codeMessage) {
+        this.code = codeMessage.getCode();
+        this.msg = codeMessage.getMsg();
     }
 
-    public R(T data, String msg) {
-        super();
-        this.data = data;
-        this.msg = msg;
-    }
-    public R(int code, String msg) {
-        super();
-        this.code = code;
-        this.msg = msg;
+    public static <T> R<T> ok(T data) {
+        Integer result = SUCCESS;
+        if (data instanceof Boolean && Boolean.FALSE.equals(data)) {
+            result = FAILED;
+        }
+        return restResult(data, result, null);
     }
 
-    public R(Throwable e) {
-        super();
-        this.msg = e.getMessage();
-        this.code = FAIL;
+    public static <T> R<T> failed(String msg) {
+        return restResult(null, FAILED, msg);
     }
 
-    public String getMsg() {
-        return msg;
+    public static <T> R<T> failed(ICodeMessage errorCode) {
+        return restResult(null, errorCode);
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public static <T> R<T> restResult(T data, ICodeMessage errorCode) {
+        return restResult(data, errorCode.getCode(), errorCode.getMsg());
     }
 
-    public int getCode() {
-        return code;
+    private static <T> R<T> restResult(T data, Integer code, String msg) {
+        R<T> apiResult = new R<>();
+        apiResult.setCode(code);
+        apiResult.setData(data);
+        apiResult.setMsg(msg);
+        return apiResult;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
+    public boolean ok() {
+        return SUCCESS.equals(code);
     }
 }

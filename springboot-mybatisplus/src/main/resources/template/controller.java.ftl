@@ -1,7 +1,7 @@
 package ${package.Controller};
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.api.R;
+import com.duan.springboot.learning.common.R;
 import com.duan.springboot.learning.mybatisplus.common.Query;
 import org.springframework.web.bind.annotation.RequestMapping;
 
