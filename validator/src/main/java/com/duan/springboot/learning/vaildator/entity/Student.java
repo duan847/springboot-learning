@@ -3,10 +3,14 @@ package com.duan.springboot.learning.vaildator.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.CreditCardNumber;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,8 +33,14 @@ public class Student implements Serializable {
 
     /**
      * 姓名
+     * @NotNull 不能为空
+     * @NotBlank 不能为空，并且去空格后也不为空
      */
-    @NotNull(message = "学生姓名不能为空")
+
+    @NotNull
+    @NotBlank
+    @Length(min = 2, max = 10)
+    @CreditCardNumber
     private String name;
 
     /**
@@ -47,7 +57,7 @@ public class Student implements Serializable {
     /**
      * 年龄
      */
-    @Range(min = 0, max = 120, message = "年龄大于等于0小于等于120")
+    @Range(min = 0, max = 120)
     public Integer age;
 
     public Student(String name, Date updateTime) {

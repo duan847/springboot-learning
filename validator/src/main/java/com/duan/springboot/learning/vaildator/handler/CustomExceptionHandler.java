@@ -13,20 +13,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 自定义异常处理
+ * @author duanjw
+ */
 @Slf4j
 @RestControllerAdvice
-public class CustomerExceptionHandler {
+public class CustomExceptionHandler {
+
+    /**
+     * 参数校验失败异常
+     * @param exception
+     * @return
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public R handle(MethodArgumentNotValidException exception) {
         BindingResult bindingResult = exception.getBindingResult();
-//        //获取参数校验错误集合
-//        List<FieldError> fieldErrors = exception.getFieldErrors();
-//        //格式化以提供友好的错误提示
-//        String data = String.format("参数校验错误（%s）：%s", fieldErrors.size(),
-//                fieldErrors.stream()
-//                        .map(FieldError::getDefaultMessage)
-//                        .collect(Collectors.joining(";")));
-//        //参数校验失败响应失败个数及原因
-        return R.failed(bindingResult.getFieldError().getDefaultMessage());
+        return R.failed(bindingResult.getFieldError().getField() + bindingResult.getFieldError().getDefaultMessage());
     }
 }

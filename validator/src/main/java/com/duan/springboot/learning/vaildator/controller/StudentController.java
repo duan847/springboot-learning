@@ -1,5 +1,7 @@
 package com.duan.springboot.learning.vaildator.controller;
 
+import com.duan.springboot.learning.common.R;
+import com.duan.springboot.learning.vaildator.common.EnumCodeMessage;
 import com.duan.springboot.learning.vaildator.entity.Student;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +30,10 @@ public class StudentController {
      * @return true、false
      */
     @PostMapping
-    public boolean insert(@Valid @RequestBody Student student) {
+    public R<Boolean> insert(@Valid @RequestBody Student student) {
+        System.out.println(EnumCodeMessage.AGE_BETWEEN_0_AND_120.getMsg());
         log.info("新增学生：{}", student);
-        return true;
+        return R.ok(true);
     }
 
 
@@ -50,11 +53,11 @@ public class StudentController {
      * @return Student
      */
     @GetMapping("/{id}")
-    public Student findById(@PathVariable Integer id) {
+    public R<Student> findById(@PathVariable Integer id) {
         if(1 == id) {
-            return new Student(1L,"张三",new Date(),"554343346@qq.com");
+            return R.ok(new Student(1L,"张三",new Date(),"554343346@qq.com"));
         }
-        return new Student();
+        return R.failed("用户不存在");
     }
 
     /**
@@ -63,12 +66,12 @@ public class StudentController {
      * @return true、false
      */
     @PutMapping
-    public boolean updateById(@RequestBody Student student) {
+    public R<Boolean> updateById(@RequestBody Student student) {
         log.info("根据id修改学生：{}", student);
         if(1 == student.getId()) {
-            return true;
+            return R.ok(true);
         }
-        return false;
+        return R.failed("学生不存在");
     }
 
     /**
@@ -77,9 +80,9 @@ public class StudentController {
      * @return true、false
      */
     @DeleteMapping("/{id}")
-    public boolean deleteById(@PathVariable Integer id) {
+    public R<Boolean> deleteById(@PathVariable Integer id) {
         log.info("根据id删除学生：{}", id);
-        return true;
+        return R.ok(true);
     }
 
 }

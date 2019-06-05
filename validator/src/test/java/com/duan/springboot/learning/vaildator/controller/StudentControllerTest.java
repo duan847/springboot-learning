@@ -60,8 +60,8 @@ public class StudentControllerTest {
      */
     @Test
     public void test02insertIllegalArgument() {
-        Student student = new Student(25L,"张三", new Date(),"1@qq.com");
-        student.setAge(-1);
+        Student student = new Student(25L,"", new Date(),"1@qq.com");
+//        student.setAge(-1);
         ResponseEntity<R> result = restTemplate.postForEntity("/student", student, R.class);
         R body = result.getBody();
         Integer code =body.getCode();
