@@ -2,6 +2,7 @@ package com.duan.springboot.learning.mybatisplus;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  *
@@ -13,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author duanjw
  * @since 2019/04/23
  */
+@EnableAsync
 @SpringBootApplication
 public class MyBatisPlusApplication {
     public static void main(String[] args) {

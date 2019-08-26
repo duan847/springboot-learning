@@ -1,0 +1,6 @@
+sms:
+  channels:
+    aliyun:
+      url: www.aliyun.com
+    tencent:
+      url: www.tencent.com

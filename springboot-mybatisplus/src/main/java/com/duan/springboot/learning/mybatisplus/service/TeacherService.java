@@ -23,4 +23,11 @@ public interface TeacherService extends IService<Teacher> {
      */
     Page<Teacher> selectPage(Query<Teacher> query);
 
+
+    /**
+     *撒发生地方
+     * @param teacher
+     */
+    Teacher updateAndGet(Teacher teacher);
+
 }

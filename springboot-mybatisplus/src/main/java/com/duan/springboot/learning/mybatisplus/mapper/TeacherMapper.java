@@ -3,6 +3,7 @@ package com.duan.springboot.learning.mybatisplus.mapper;
 import com.duan.springboot.learning.mybatisplus.pojo.entity.Teacher;
 import com.duan.springboot.learning.mybatisplus.common.Query;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 /**
@@ -23,4 +24,5 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
      */
     List<Teacher> selectPage(Query query);
 
+    Teacher getById(@Param("id") Long id);
 }

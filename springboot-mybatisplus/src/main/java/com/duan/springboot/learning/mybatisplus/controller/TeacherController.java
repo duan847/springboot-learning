@@ -78,5 +78,13 @@ public class TeacherController {
     @PutMapping
     public R<Boolean> updateById(@RequestBody Teacher teacher) {
         return R.ok(teacherService.updateById(teacher));
+
     }
+
+    @PostMapping("join")
+    public R<Teacher> updateAndGet(@RequestBody Teacher teacher) {
+        return R.ok(teacherService.updateAndGet(teacher));
+    }
+
+
 }

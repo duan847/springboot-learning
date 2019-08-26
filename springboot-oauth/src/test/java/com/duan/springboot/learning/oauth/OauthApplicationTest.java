@@ -32,7 +32,7 @@ public class OauthApplicationTest {
     @Test
     public void test01show() {
         //get
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:8080/show", String.class);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:8013/show", String.class);
         //状态码是否为401
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
 
@@ -50,7 +50,7 @@ public class OauthApplicationTest {
         //HttpEntity
         HttpEntity<MultiValueMap> requestEntity = new HttpEntity<>(requestHeaders);
         //post
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity("http://localhost:8080/oauth/token?scope=read&grant_type=password&usrname=1&password=1", requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity("http://localhost:8013/oauth/token?scope=read&grant_type=password&usrname=1&password=1", requestEntity, String.class);
 
         String responseBody = responseEntity.getBody();
         log.info("获取jwt格式的token：{}", responseBody);
@@ -68,7 +68,7 @@ public class OauthApplicationTest {
         //HttpEntity
         HttpEntity<MultiValueMap> requestEntity = new HttpEntity<>(requestHeaders);
         //post
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity("http://localhost:8080/oauth/token?scope=read&grant_type=password&usrname=1&password=1", requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity("http://localhost:8013/oauth/token?scope=read&grant_type=password&usrname=1&password=1", requestEntity, String.class);
 
         String responseEntityBody = responseEntity.getBody();
 
@@ -82,7 +82,7 @@ public class OauthApplicationTest {
         requestEntity = new HttpEntity<>(requestHeaders);
 
         //get
-        responseEntity = restTemplate.exchange("http://localhost:8080/show", HttpMethod.GET, requestEntity, String.class);
+        responseEntity = restTemplate.exchange("http://localhost:8013/show", HttpMethod.GET, requestEntity, String.class);
 
         //状态码是否为401
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
@@ -102,7 +102,7 @@ public class OauthApplicationTest {
         //HttpEntity
         HttpEntity<MultiValueMap> requestEntity = new HttpEntity<>(requestHeaders);
         //post
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity("http://localhost:8080/oauth/token?scope=read&grant_type=password&usrname=1&password=1", requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity("http://localhost:8013/oauth/token?scope=read&grant_type=password&usrname=1&password=1", requestEntity, String.class);
 
         String responseEntityBody = responseEntity.getBody();
 
@@ -117,7 +117,7 @@ public class OauthApplicationTest {
         //HttpEntity
         requestEntity = new HttpEntity<>(requestHeaders);
         //post
-        responseEntity = restTemplate.postForEntity("http://localhost:8080/oauth/token?grant_type=refresh_token&refresh_token=" + refreshToken + "&client_id=clientid&client_secret=secret", requestEntity, String.class);
+        responseEntity = restTemplate.postForEntity("http://localhost:8013/oauth/token?grant_type=refresh_token&refresh_token=" + refreshToken + "&client_id=clientid&client_secret=secret", requestEntity, String.class);
         System.out.println(responseEntity.getBody());
 
     }

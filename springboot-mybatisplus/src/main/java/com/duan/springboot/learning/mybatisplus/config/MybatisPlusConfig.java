@@ -19,6 +19,7 @@ public class MybatisPlusConfig {
      */
     @Bean
     public PaginationInterceptor paginationInterceptor() {
+        System.out.println(1);
         return new PaginationInterceptor().setDialectType("h2");
     }
 //

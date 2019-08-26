@@ -18,7 +18,7 @@ topic：给符合路由键绑定的多个消息队列多发消息。如 *.news�
 ### 安装RabbitMQ（docker环境下安装）参考：springboot-docker/README.md
 
 ```shell
-docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 -v `pwd`/data:/var/lib/rabbitmq -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=admin rabbitmq:management
+sudo docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 -v $PWD/docker/rabbitmq/data:/var/lib/rabbitmq -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=admin rabbitmq:management
 ```
 | 参数   |      含义      | 
 |----------|-------------|

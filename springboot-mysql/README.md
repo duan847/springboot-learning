@@ -1,6 +1,6 @@
 ## 安装mysql（docker环境）
 ```shell
-docker run -d -p 3306:3306 --name mysql -v $PWD/conf:/etc/mysql/conf.d -v $PWD/logs:/logs -v $PWD/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql
+sudo docker run -d -p 3306:3306 --name mysql -v $PWD/docker/mysql/conf:/etc/mysql/conf.d -v $PWD/docker/mysql/logs:/logs -v $PWD/docker/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql --default-authentication-plugin=mysql_native_password
 
 ## mysql使用最新版的8.X镜像，客户端可能连接不上。
 要不更新客户端。

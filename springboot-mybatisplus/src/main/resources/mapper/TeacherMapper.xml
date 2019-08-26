@@ -13,4 +13,8 @@
         </trim>
     </select>
 
+    <select id="getById" resultType="com.duan.springboot.learning.mybatisplus.pojo.entity.Teacher">
+        select name from teacher where id = #{id}
+    </select>
+
 </mapper>

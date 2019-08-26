@@ -9,10 +9,10 @@
     </insert>
 
     <!--批量新增学生-->
-    <insert id="insertBatch" parameterType="list">
+    <insert id="insertBatch" parameterType="channels">
         INSERT INTO student(`name`, `update_time`)
         VALUES
-        <foreach collection="list" item="item" index="index" separator=",">
+        <foreach collection="channels" item="item" index="index" separator=",">
             (#{item.name}, #{item.updateTime})
         </foreach>
     </insert>

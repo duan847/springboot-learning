@@ -7,3 +7,7 @@ spring:
     redis:
       repositories:
         enabled=false:
+security:
+  oauth2:
+    resource:
+      filter-order: 3

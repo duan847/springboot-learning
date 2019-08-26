@@ -29,6 +29,9 @@
         <module>common</module>
         <module>docker</module>
         <module>validator</module>
+        <module>yaml</module>
+        <module>pay</module>
+        <module>event</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
