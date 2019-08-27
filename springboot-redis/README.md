@@ -1,6 +1,6 @@
 ## 安装Redis（docker）
 ```shell
-docker run -d --name redis -p 6379:6379 redis
+sudo docker run -d --name redis --restart always -p 6379:6379 redis
 ```
 | 参数   |      含义      | 
 |----------|-------------|
