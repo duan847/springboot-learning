@@ -48,9 +48,18 @@ public class StudentServiceImplTest {
      */
     @Test
     public void test02insertBatch() {
-        List<Student> studentList = Arrays.asList(new Student("批量1", new Date()), new Student("批量2", new Date()));
+        List<Student> studentList = new ArrayList<>();
+        final long startTime = System.currentTimeMillis();
+        System.out.println(startTime);
+        for (int i = 0; i < 100000; i++) {
+            studentList.add(new Student(i,"张" + i,new Date()));
+        }
+        System.out.println("用时1：" + (System.currentTimeMillis() - startTime));
+
         //新增学生返回结果是否为true
         assertThat(studentService.insertBatch(studentList), is(true));
+        System.out.println("用时2：" + (System.currentTimeMillis() - startTime));
+
     }
 
     /**
@@ -91,6 +100,11 @@ public class StudentServiceImplTest {
         map.put("pageNum", 1);
         map.put("pageSize", "20");
         map.put("name", "张");
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < 10030; i++) {
+            list.add(i);
+        }
+        map.put("array",list);
         //分页查询结果
         PageInfo<Student> studentPageInfo = studentService.selectPage(map);
         List<Student> studentList = studentPageInfo.getList();
@@ -126,9 +140,19 @@ public class StudentServiceImplTest {
      */
     @Test
     public void test08updateBatchById() {
-        List<Student> studentList = Arrays.asList(new Student(27, "批量修改1", new Date()), new Student(28, "批量修改2", new Date()));
+        List<Student> studentList = new ArrayList<>();
+        final long startTime = System.currentTimeMillis();
+        System.out.println(startTime);
+        for (int i = 0; i < 100000; i++) {
+            studentList.add(new Student(i,"张" + i,new Date()));
+        }
+        System.out.println("用时1：" + (System.currentTimeMillis() - startTime));
+
+//        List<Student> studentList = Arrays.asList(new Student(27, "批量修改1", new Date()), new Student(28, "批量修改2", new Date()));
         //根据id修改学生返回结果是否为true
-        assertThat(studentService.updateBatchById(studentList), is(true));
+        assertThat(studentService.updateBatchById(studentList), is(false));
+        System.out.println("用时2：" + (System.currentTimeMillis() - startTime));
+
     }
 
     /**

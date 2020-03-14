@@ -4,10 +4,9 @@ spring:
     # mysql链接驱动，可不配置。默认从引入的pom中找
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 123456
-    # 批量更新sql需要设置&allowMultiQueries=true
-    url: jdbc:mysql://39.106.164.245:3306/test?characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true
-    # 连接池，可不配置。2.x默认使用该连接池
+    password: Duan1234
+      ## 批量更新sql需要设置&allowMultiQueries=true
+    url: jdbc:mysql://rm-wz9bkwv69su8u0hl3bo.mysql.rds.aliyuncs.com:3306/test?characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true    # 连接池，可不配置。2.x默认使用该连接池
     type: com.zaxxer.hikari.HikariDataSource
     # 每次启动初始化数据库
     schema: classpath:db/init.sql
@@ -33,3 +32,7 @@ pagehelper:
 logging:
   level:
     com.duan.springboot.learning.mybatis.mapper: DEBUG
+server:
+  tomcat:
+    max-threads: 200
+

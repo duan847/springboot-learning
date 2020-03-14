@@ -29,7 +29,9 @@ public class StudentServiceImpl implements StudentService {
      * @return 学生list
      */
     @Override
-    public List<Student> select() {
+    @Cacheable(cacheNames = "students4", key = "#a+'::'+#b")
+    public List<Student> select(String a, String b) {
+        log.info("开始缓存查询所有学生");
         List<Student> studentList = Arrays.asList(new Student(1, "张三", new Date()), new Student(2, "李四", new Date()));
         return studentList;
     }

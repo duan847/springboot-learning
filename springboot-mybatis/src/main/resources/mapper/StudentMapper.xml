@@ -9,11 +9,11 @@
     </insert>
 
     <!--批量新增学生-->
-    <insert id="insertBatch" parameterType="channels">
-        INSERT INTO student(`name`, `update_time`)
+    <insert id="insertBatch" parameterType="list">
+        INSERT INTO student(`id`, `name`, `update_time`)
         VALUES
-        <foreach collection="channels" item="item" index="index" separator=",">
-            (#{item.name}, #{item.updateTime})
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.name}, #{item.updateTime})
         </foreach>
     </insert>
 
@@ -28,6 +28,10 @@
             <if test="null != startTime and null != endTime">
                 AND update_time between startTime and endTime
             </if>
+            and id in
+            <foreach collection="array" item="item" index="index" open="(" close=")" separator=",">
+                <if test="(index % 999) == 998"> NULL ) OR ID IN (</if>#{item}
+            </foreach>
         </trim>
     </select>
 

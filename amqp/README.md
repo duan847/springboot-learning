@@ -27,7 +27,7 @@ sudo docker run -d --name rabbitmq --restart always -p 5672:5672 -p 15672:15672 
 1. 在主机上下载延迟队列插件
 
 `wget https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/download/v3.8.0/rabbitmq_delayed_message_exchange-3.8.0.ez`
-2. 编写Dockerfile文件制作带有延迟队列的rabbitmq镜像
+2. 编写`Dockerfile`文件制作带有延迟队列的rabbitmq镜像
 
 ```dockerfile
 FROM rabbitmq
@@ -35,9 +35,14 @@ FROM rabbitmq
 COPY rabbitmq_delayed_message_exchange-3.8.0.ez /plugins
 RUN rabbitmq-plugins enable --offline rabbitmq_mqtt rabbitmq_federation_management rabbitmq_stomp rabbitmq_delayed_message_exchange
 ```
+
+3. 制作`myrabbitmq`镜像
+```shell script
+docker build -t myrabbitmq .
+```
 3. 运行带有延迟队列的rabbitmq镜像
 
-`sudo docker run -d --name rabbitmq --restart always -p 5672:5672 -p 15672:15672 -v $PWD/docker/rabbitmq/data:/var/lib/rabbitmq -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=admin myrabbitmq`
+`sudo docker run -d --name rabbitmq --restart always -p 5672:5672 -p 15672:15672 -v ~/docker/rabbitmq/data:/var/lib/rabbitmq -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=admin myrabbitmq`
 
 | 参数   |      含义      | 
 |----------|-------------|

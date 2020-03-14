@@ -17,7 +17,7 @@ public interface StudentService {
      *
      * @return 学生list
      */
-    List<Student> select();
+    List<Student> select(String a, String b);
 
     /**
      * 根据id查看学生

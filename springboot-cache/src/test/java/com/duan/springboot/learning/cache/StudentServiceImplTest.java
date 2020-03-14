@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
@@ -98,6 +99,15 @@ public class StudentServiceImplTest {
         //根据id删除学生返回结果是否为true
         assertThat(studentService.deleteAll(), is(true));
         log.info("删除所有学生成功。");
+        RedisSerializer
     }
-
+    /**
+     * 查询所有学生
+     */
+    @Test
+    public void test7selectAll() {
+        //根据id删除学生返回结果是否为true
+        assertThat(studentService.select("1","2"), notNullValue());
+        log.info("查询所有学生。");
+    }
 }
