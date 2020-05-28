@@ -13,10 +13,10 @@ spring:
   datasource:
     ## mysql链接驱动，可不配置。默认从引入的pom中找
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: video
-    password: Video123
+    username: root
+    password: Duan1234
     ## 批量更新sql需要设置&allowMultiQueries=true
-    url: jdbc:mysql://rm-wz9bkwv69su8u0hl3bo.mysql.rds.aliyuncs.com:3306/video?characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    url: jdbc:mysql://rm-bp1qmk7v384kq7y2gpo.mysql.rds.aliyuncs.com:3306/student?characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true
     ## 连接池，可不配置。2.x默认使用该连接池
     type: com.zaxxer.hikari.HikariDataSource
     ## 每次启动都会执行初始化表的sql，如果不需要，删除

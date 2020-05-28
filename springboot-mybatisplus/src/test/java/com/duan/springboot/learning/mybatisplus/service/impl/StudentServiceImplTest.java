@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.duan.springboot.learning.mybatisplus.pojo.entity.Student;
 import com.duan.springboot.learning.mybatisplus.service.StudentService;
+import lombok.Builder;
+import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -14,6 +17,7 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +38,8 @@ public class StudentServiceImplTest {
 
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     /**
      * 测试新增学生
@@ -171,4 +177,16 @@ public class StudentServiceImplTest {
         Assert.assertThat(studentService.removeByIds(Arrays.asList(22L, 23L)), is(true));
         log.info("根据id批量删除学生成功。");
     }
+
+    /**
+     * 测试根据id批量删除学生
+     */
+    @Test
+    public void test12insertBatchById() {
+        for (int i = 0; i < 5000; i++) {
+        }
+        int[] ints = jdbcTemplate.batchUpdate("INSERT INTO student (name ) VALUES ('jdbc') ");
+        log.info("jdbcTemplate批量新增成功。", ints);
+    }
+
 }

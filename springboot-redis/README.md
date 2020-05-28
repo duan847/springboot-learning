@@ -1,6 +1,6 @@
 ## 安装Redis（docker）
 ```shell
-sudo docker run -d --name redis --restart always -p 6379:6379 redis
+sudo docker run -d --name redis --restart always -p 6379:6379 redis --requirepass "123456"
 ```
 | 参数   |      含义      | 
 |----------|-------------|

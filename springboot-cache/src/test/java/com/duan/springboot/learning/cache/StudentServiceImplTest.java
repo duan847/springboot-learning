@@ -99,7 +99,6 @@ public class StudentServiceImplTest {
         //根据id删除学生返回结果是否为true
         assertThat(studentService.deleteAll(), is(true));
         log.info("删除所有学生成功。");
-        RedisSerializer
     }
     /**
      * 查询所有学生

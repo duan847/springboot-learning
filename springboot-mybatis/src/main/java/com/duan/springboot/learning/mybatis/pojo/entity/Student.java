@@ -24,19 +24,12 @@ public class Student implements Serializable {
      * 学生id
      */
     private Integer id;
-
     /**
      * 姓名
      */
     private String name;
-
     /**
      * 更新时间
      */
     private Date updateTime;
-
-    public Student(String name, Date updateTime) {
-        this.name = name;
-        this.updateTime = updateTime;
-    }
 }

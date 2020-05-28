@@ -43,6 +43,15 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context-indexer -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-indexer</artifactId>
+            <version>5.2.6.RELEASE</version>
+            <scope>optional</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
