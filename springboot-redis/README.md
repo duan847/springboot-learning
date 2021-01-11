@@ -4,6 +4,7 @@ sudo docker run -d --name redis --restart always -p 6379:6379 redis --requirepas
 ```
 | 参数   |      含义      | 
 |----------|-------------|
-| --name | 容器名称 |
-| -p 6379:6379 | Redis连接地址，程序连接需要的端口号 |
-| redis | 镜像名 |
+| --name redis | 容器名称 |
+| -p 6379:6379 | 映射到主机的端口 |
+| redis:5.0.7 | 镜像名 |
+| --requirepass | Redis 连接密码 |
